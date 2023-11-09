@@ -9,7 +9,7 @@ import (
 func main() {
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.String(http.StatusOK, "Hello, World!") //nolint: wrapcheck
 	})
 	e.GET("/users/:id", getUser)
 	e.Logger.Fatal(e.Start(":8080"))
@@ -17,5 +17,6 @@ func main() {
 
 func getUser(c echo.Context) error {
 	id := c.Param("id")
-	return c.String(http.StatusOK, id)
+
+	return c.String(http.StatusOK, id) //nolint: wrapcheck
 }

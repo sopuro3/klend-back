@@ -1,0 +1,14 @@
+linters:
+  enable-all: true
+  disable:
+    - deadcode
+    - depguard
+    - exhaustivestruct
+    - golint
+    - ifshort
+    - interfacer
+    - maligned
+    - nosnakecase
+    - scopelint
+    - structcheck
+    - varcheck
