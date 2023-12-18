@@ -12,3 +12,5 @@ linters:
     - scopelint
     - structcheck
     - varcheck
+    - godot
+    - wrapcheck # return c.JSON()でエラーがでるので
