@@ -1,5 +1,12 @@
 package user
 
+import (
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/sopuro3/klend-back/pkg/api"
+)
+
 type RequestUser struct {
 	UserId   string `json:"userId"`   // uuidv7
 	Email    string `json:"email"`    // email 1~`128
@@ -7,13 +14,26 @@ type RequestUser struct {
 	Password string `json:"password"` // password 12~
 }
 
-type RequestLogin struct{
-   Id string `json:"id"` // email or username
-   Password string `json:"password"` // 12~
+type RequestLogin struct {
+	Id       string `json:"id"`       // email or username
+	Password string `json:"password"` // 12~
 }
 
-type RequestLogout struct{
-   Id string `json:"id"`
+type RequestLogout struct {
+	Id string `json:"id"`
 }
 
+// TODO
+func PostUserCreate(c echo.Context) error {
+	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success crate user"})
+}
 
+// TODO
+func PostUserLogin(c echo.Context) error {
+	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success login"})
+}
+
+// TODO
+func PostUserLogout(c echo.Context) error {
+	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success logout"})
+}
