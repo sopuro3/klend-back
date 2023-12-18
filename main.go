@@ -8,6 +8,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	equipmentHandler "github.com/sopuro3/klend-back/pkg/api/equipment"
+	formHandler "github.com/sopuro3/klend-back/pkg/api/form"
+	userHandler "github.com/sopuro3/klend-back/pkg/api/user"
 )
 
 func main() {
@@ -52,15 +55,30 @@ func main() {
 		},
 	}))
 
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!") //nolint: wrapcheck
-	})
-	e.GET("/users/:id", getUser)
+	handlerInit(e)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
-func getUser(c echo.Context) error {
-	id := c.Param("id")
+func handlerInit(e *echo.Echo) {
+	e.GET("/version", func(c echo.Context) error {
+		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
+	})
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
+	})
 
-	return c.String(http.StatusOK, id) //nolint: wrapcheck
+	e.POST("/v1/user", userHandler.PostUserCreate)
+	e.POST("/v1/user/login", userHandler.PostUserLogin)
+	e.POST("/v1/user/logout", userHandler.PostUserLogout)
+	e.GET("/v1/form", formHandler.GetFormList)
+	e.DELETE("/v1/form/:formID", formHandler.DeleteForm)
+	e.GET("/v1/form/:formID", equipmentHandler.GetFormByID)
+	e.PATCH("/v1/form/:formID", equipmentHandler.PatchFormByID)
+	e.PUT("/v1/form/:formID", equipmentHandler.PutConfirmFormByID)
+	e.POST("/v1/form/survey", formHandler.PostCreateNewSurvey)
+	e.GET("/v1/equipment", equipmentHandler.GetEquipmentsList)
+	e.POST("/v1/equipment", equipmentHandler.PostNewEquipment)
+	e.GET("/v1/equipment/:equipmentID", equipmentHandler.GetEquipmentByID)
+	e.PUT("/v1/equipment/:equipmentID", equipmentHandler.PutEquipmentByID)
 }
