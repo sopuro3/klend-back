@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	equipmentHandler "github.com/sopuro3/klend-back/pkg/api/equipment"
+	formHandler "github.com/sopuro3/klend-back/pkg/api/form"
 	userHandler "github.com/sopuro3/klend-back/pkg/api/user"
 )
 
@@ -70,15 +71,14 @@ func handlerInit(e *echo.Echo) {
 	e.POST("/v1/user", userHandler.PostUserCreate)
 	e.POST("/v1/user/login", userHandler.PostUserLogin)
 	e.POST("/v1/user/logout", userHandler.PostUserLogout)
-	e.GET("/v1/form", equipmentHandler.GetFormList)
-	e.DELETE("/v1/form/:formId", equipmentHandler.DeleteForm)
-	e.GET("/v1/form/:formId", equipmentHandler.GetFormById)
-	e.PATCH("/v1/form/:formId", equipmentHandler.PatchFormById)
-	e.PUT("/v1/form/:formId", equipmentHandler.PutConfirmFormById)
-	e.POST("/v1/form/survey", equipmentHandler.PostCreateNewSurvey)
+	e.GET("/v1/form", formHandler.GetFormList)
+	e.DELETE("/v1/form/:formId", formHandler.DeleteForm)
+	e.GET("/v1/form/:formId", equipmentHandler.GetFormByID)
+	e.PATCH("/v1/form/:formId", equipmentHandler.PatchFormByID)
+	e.PUT("/v1/form/:formId", equipmentHandler.PutConfirmFormByID)
+	e.POST("/v1/form/survey", formHandler.PostCreateNewSurvey)
 	e.GET("/v1/equipment", equipmentHandler.GetEquipmentsList)
 	e.POST("/v1/equipment", equipmentHandler.PostNewEquipment)
-	e.GET("/v1/equipment/:equipmentId", equipmentHandler.GetEquipmentById)
-	e.PUT("/v1/equipment/:equipmentId", equipmentHandler.PutEquipmentById)
-
+	e.GET("/v1/equipment/:equipmentId", equipmentHandler.GetEquipmentByID)
+	e.PUT("/v1/equipment/:equipmentId", equipmentHandler.PutEquipmentByID)
 }

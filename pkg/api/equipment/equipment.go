@@ -8,7 +8,7 @@ import (
 )
 
 type Equipment struct {
-	Id              string `json:"id"`
+	ID              string `json:"id"`
 	Name            string `json:"name"`
 	MaxQuantity     int    `json:"maxQuantity"`
 	CurrentQuantity int    `json:"currentQuantity"`
@@ -27,45 +27,54 @@ type RequestNewEquipment struct {
 }
 
 type ResponseNewEquipment struct {
-	Id string `json:"id"`
+	ID string `json:"id"`
 }
 
 // TODO
 // GET /equipment
-func GetEquipmentsList(c echo.Context) error {
-	res := ResponseEquipmentList{
+func GetEquipmentsList(ctx echo.Context) error {
+	total := 2
+	response := ResponseEquipmentList{
 		Equipments: []Equipment{
-			{Id: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
-			{Id: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
+			{ID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
+			{ID: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
 		},
-		TotalEquipments: 2,
+		TotalEquipments: total,
 	}
 
-	return c.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // TODO
 // POST /equipment
 func PostNewEquipment(c echo.Context) error {
 	res := ResponseNewEquipment{"018c7b9f8c55708f803527a5528e83ed"}
+
 	return c.JSON(http.StatusOK, res)
 }
 
 // TODO
 // GET /equipment/[:equipmentId]
-func GetEquipmentById(c echo.Context) error {
-	res := Equipment{Id: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"}
-	return c.JSON(http.StatusOK, res)
+func GetEquipmentByID(ctx echo.Context) error {
+	res := Equipment{
+		ID:              "018c7b9f8c55708f803527a5528e83ed",
+		Name:            "角スコップ",
+		MaxQuantity:     20,
+		CurrentQuantity: 10,
+		Note:            "てすとてすとてすと",
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
 
 // TODO
 // PUT /equipment/[:equipmentId]
-func PutEquipmentById(c echo.Context) error {
+func PutEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success update equipment"})
 }
 
 // TODO
 // DELETE /equipment/[:equipmentId]
-func DeleteEquipmentById(c echo.Context) error {
+func DeleteEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success delete equipment"})
 }

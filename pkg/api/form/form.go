@@ -1,4 +1,4 @@
-package equipment
+package form
 
 import (
 	"net/http"
@@ -7,14 +7,16 @@ import (
 	"github.com/sopuro3/klend-back/pkg/api"
 )
 
-type IssueId string   //uuidv7
-type DisplayId string //数字4桁
+type (
+	IssueID   string // uuidv7
+	DisplayID string // 数字4桁
+)
 
 type issue struct {
-	Adress    string    `json:"adress"` //128文字
-	Name      string    `json:"name"`   // 128文字
-	Id        IssueId   `json:"id"`
-	DisplayId DisplayId `json:"displayId"`
+	Address   string    `json:"address"` // 128文字
+	Name      string    `json:"name"`    // 128文字
+	ID        IssueID   `json:"id"`
+	DisplayID DisplayID `json:"displayId"`
 	Note      string    `json:"note"` // 256文字
 }
 
@@ -24,20 +26,21 @@ type ResponseForm struct {
 }
 
 type RequestDeleteForm struct {
-	Id IssueId `json:"id"`
+	ID IssueID `json:"id"`
 }
 
 // TODO
-func GetFormList(c echo.Context) error {
+func GetFormList(ctx echo.Context) error {
+	total := 2
 	response := ResponseForm{
 		Issue: []issue{
 			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", "テストデータ"},
 			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", "テストテスト"},
 		},
-		Total: 2,
+		Total: total,
 	}
 
-	return c.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // TODO
