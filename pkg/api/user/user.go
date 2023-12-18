@@ -8,19 +8,19 @@ import (
 )
 
 type RequestUser struct {
-	UserId   string `json:"userId"`   // uuidv7
+	UserID   string `json:"userId"`   // uuidv7
 	Email    string `json:"email"`    // email 1~`128
 	UserName string `json:"userName"` // username 1~128
 	Password string `json:"password"` // password 12~
 }
 
 type RequestLogin struct {
-	Id       string `json:"id"`       // email or username
+	ID       string `json:"id"`       // email or username
 	Password string `json:"password"` // 12~
 }
 
 type RequestLogout struct {
-	Id string `json:"id"`
+	ID string `json:"id"`
 }
 
 // TODO
