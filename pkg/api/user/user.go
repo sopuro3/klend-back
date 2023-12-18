@@ -20,7 +20,7 @@ type RequestLogin struct {
 }
 
 type RequestLogout struct {
-	ID string `json:"id"`
+	ID string `json:"id"` // email or username
 }
 
 // TODO

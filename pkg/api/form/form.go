@@ -15,18 +15,18 @@ type (
 type issue struct {
 	Address   string    `json:"address"` // 128文字
 	Name      string    `json:"name"`    // 128文字
-	ID        IssueID   `json:"id"`
-	DisplayID DisplayID `json:"displayId"`
+	IssueID   IssueID   `json:"issueID"`
+	DisplayID DisplayID `json:"displayID"`
 	Note      string    `json:"note"` // 256文字
 }
 
 type ResponseForm struct {
-	Issue []issue `json:"issue"`
-	Total int     `json:"total"`
+	Issue      []issue `json:"issue"`
+	TotalIssue int     `json:"totalIssue"`
 }
 
 type RequestDeleteForm struct {
-	ID IssueID `json:"id"`
+	IssueID IssueID `json:"issueID"`
 }
 
 // TODO
@@ -37,7 +37,7 @@ func GetFormList(ctx echo.Context) error {
 			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", "テストデータ"},
 			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", "テストテスト"},
 		},
-		Total: total,
+		TotalIssue: total,
 	}
 
 	return ctx.JSON(http.StatusOK, response)

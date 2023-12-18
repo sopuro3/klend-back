@@ -8,7 +8,7 @@ import (
 )
 
 type Equipment struct {
-	ID              string `json:"id"`
+	EquipmentID     string `json:"equipmentID"`
 	Name            string `json:"name"`
 	MaxQuantity     int    `json:"maxQuantity"`
 	CurrentQuantity int    `json:"currentQuantity"`
@@ -27,7 +27,7 @@ type RequestNewEquipment struct {
 }
 
 type ResponseNewEquipment struct {
-	ID string `json:"id"`
+	EquipmentID string `json:"id"`
 }
 
 // TODO
@@ -36,8 +36,8 @@ func GetEquipmentsList(ctx echo.Context) error {
 	total := 2
 	response := ResponseEquipmentList{
 		Equipments: []Equipment{
-			{ID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
-			{ID: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
+			{EquipmentID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
+			{EquipmentID: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
 		},
 		TotalEquipments: total,
 	}
@@ -57,7 +57,7 @@ func PostNewEquipment(c echo.Context) error {
 // GET /equipment/[:equipmentId]
 func GetEquipmentByID(ctx echo.Context) error {
 	res := Equipment{
-		ID:              "018c7b9f8c55708f803527a5528e83ed",
+		EquipmentID:     "018c7b9f8c55708f803527a5528e83ed",
 		Name:            "角スコップ",
 		MaxQuantity:     20,
 		CurrentQuantity: 10,
