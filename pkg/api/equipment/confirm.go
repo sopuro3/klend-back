@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/sopuro3/klend-back/pkg/api"
 )
 
@@ -21,13 +22,12 @@ type ResponseFormData struct {
 // GET /form/[:formId]
 // フォームのデータを取得
 func GetFormByID(ctx echo.Context) error {
+	//nolint:gomnd,lll
 	res := ResponseFormData{
-		//nolint
 		Equipments: []PlannedEquipment{
 			{Equipment{EquipmentID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"}, 5},
 			{Equipment{EquipmentID: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"}, 10},
 		},
-		//nolint
 		TotalEquipments: 2,
 	}
 

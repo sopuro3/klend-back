@@ -4,11 +4,12 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/sopuro3/klend-back/pkg/api"
 )
 
 type Equipment struct {
-	EquipmentID     string `json:"equipmentID"`
+	EquipmentID     string `json:"equipmentId"`
 	Name            string `json:"name"`
 	MaxQuantity     int    `json:"maxQuantity"`
 	CurrentQuantity int    `json:"currentQuantity"`
@@ -35,6 +36,7 @@ type ResponseNewEquipment struct {
 func GetEquipmentsList(ctx echo.Context) error {
 	total := 2
 	response := ResponseEquipmentList{
+		//nolint:gomnd,lll
 		Equipments: []Equipment{
 			{EquipmentID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
 			{EquipmentID: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
@@ -56,6 +58,7 @@ func PostNewEquipment(c echo.Context) error {
 // TODO
 // GET /equipment/[:equipmentId]
 func GetEquipmentByID(ctx echo.Context) error {
+	//nolint:gomnd
 	res := Equipment{
 		EquipmentID:     "018c7b9f8c55708f803527a5528e83ed",
 		Name:            "角スコップ",
