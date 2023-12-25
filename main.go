@@ -64,6 +64,14 @@ func main() {
 	fmt.Println(user)
 
 	e := echo.New()
+
+	loggerInit(e, logger)
+	handlerInit(e)
+
+	e.Logger.Fatal(e.Start(":8080"))
+}
+
+func loggerInit(e *echo.Echo, logger *slog.Logger) {
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{ //nolint:exhaustruct
 		LogURI:      true,
 		LogMethod:   true,
@@ -101,10 +109,6 @@ func main() {
 			return nil
 		},
 	}))
-
-	handlerInit(e)
-
-	e.Logger.Fatal(e.Start(":8080"))
 }
 
 func handlerInit(e *echo.Echo) {
