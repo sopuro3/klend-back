@@ -3,9 +3,11 @@ package argon2
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"github.com/sopuro3/klend-back/pkg/password"
 	"golang.org/x/crypto/argon2"
+	"strings"
 )
 
 type Argon2Encoder struct{}
@@ -31,7 +33,7 @@ func createEncodedPassword(hashedPassword, salt []byte) password.EncodedPassword
 
 	base64Salt := base64.StdEncoding.EncodeToString(salt)
 	base64HashedPassword := base64.StdEncoding.EncodeToString(hashedPassword)
-	// $<algorithm name>$v=<version>$m=<memory size>$t=<time>$p=<threads>$l=<len>$<b64 salt>$<b64 hash value>
+	// $<algorithm name>$v=<version>$m=<memory size>$t=<time>$p=<threads>$l=<len>$<hex salt>$<hex hash value>
 	return password.EncodedPassword(fmt.Sprintf("$%s$v=%d$m=%d$t=%d$p=%d$l=%d$%s$%s$", algorithm, version, memory, time, threads, keyLen, base64Salt, base64HashedPassword))
 }
 func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPassword, error) {
@@ -41,14 +43,38 @@ func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPass
 	if err != nil {
 		return "", err
 	}
-
 	// to hash
 	hashedPassword := createHashPassword(rawPassword, salt)
 
 	return createEncodedPassword(hashedPassword, salt), nil
 }
 
-func (e *Argon2Encoder) IsMatchPassword(rawPassword string, encodedPassword password.EncodedPassword) bool {
-	//TODO implement me
-	panic("implement me")
+func (e *Argon2Encoder) IsMatchPassword(rawPassword string, encodedPassword password.EncodedPassword) (bool, error) {
+	//,errTODO implement mesplit[7
+	inputPassword, err := e.EncodePassword(rawPassword)
+	if err != nil {
+		return false, err
+	}
+	if inputPassword == encodedPassword {
+		return true, nil
+	}
+	return false, nil
+
+}
+
+func decodeHash(encodedPassword password.EncodedPassword) (hashedPassword, salt string, err error) {
+	split := strings.Split(string(encodedPassword), "$")
+	if len(split) != 9 {
+		return "", "", errors.New("password is invalid format")
+	}
+	decodedSalt, err := base64.StdEncoding.DecodeString(split[7])
+	if err != nil {
+		return "", "", err
+	}
+	decodedHashedPassword, err := base64.StdEncoding.DecodeString(split[8])
+	if err != nil {
+		return "", "", err
+	}
+
+	return string(decodedHashedPassword), string(decodedSalt), nil
 }
