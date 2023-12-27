@@ -31,10 +31,10 @@ func createHashPassword(rawPassword string, salt []byte) []byte {
 
 func createEncodedPassword(hashedPassword, salt []byte) password.EncodedPassword {
 
-	base64Salt := base64.StdEncoding.EncodeToString(salt)
-	base64HashedPassword := base64.StdEncoding.EncodeToString(hashedPassword)
-	// $<algorithm name>$v=<version>$m=<memory size>$t=<time>$p=<threads>$l=<len>$<hex salt>$<hex hash value>
-	return password.EncodedPassword(fmt.Sprintf("$%s$v=%d$m=%d$t=%d$p=%d$l=%d$%s$%s$", algorithm, version, memory, time, threads, keyLen, base64Salt, base64HashedPassword))
+	base64Salt := base64.RawStdEncoding.EncodeToString(salt)
+	base64HashedPassword := base64.RawStdEncoding.EncodeToString(hashedPassword)
+	// $<algorithm name>$v=<version>$m=<memory size>,t=<time>,p=<threads>$<b64 salt>$<b64 hash value>
+	return password.EncodedPassword(fmt.Sprintf("$%s$v=%d$m=%d,t=%d,p=%d$%s$%s$", algorithm, version, memory, time, threads, base64Salt, base64HashedPassword))
 }
 func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPassword, error) {
 	saltLen := 32
