@@ -112,6 +112,7 @@ func loggerInit(e *echo.Echo, logger *slog.Logger) {
 }
 
 func handlerInit(e *echo.Echo) {
+	group := e.Group("/v1")
 	e.GET("/version", func(c echo.Context) error {
 		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
 	})
@@ -119,17 +120,17 @@ func handlerInit(e *echo.Echo) {
 		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
 	})
 
-	e.POST("/v1/user", userHandler.PostUserCreate)
-	e.POST("/v1/user/login", userHandler.PostUserLogin)
-	e.POST("/v1/user/logout", userHandler.PostUserLogout)
-	e.GET("/v1/form", formHandler.GetFormList)
-	e.DELETE("/v1/form/:formID", formHandler.DeleteForm)
-	e.GET("/v1/form/:formID", equipmentHandler.GetFormByID)
-	e.PATCH("/v1/form/:formID", equipmentHandler.PatchFormByID)
-	e.PUT("/v1/form/:formID", equipmentHandler.PutConfirmFormByID)
-	e.POST("/v1/form/survey", formHandler.PostCreateNewSurvey)
-	e.GET("/v1/equipment", equipmentHandler.GetEquipmentsList)
-	e.POST("/v1/equipment", equipmentHandler.PostNewEquipment)
-	e.GET("/v1/equipment/:equipmentID", equipmentHandler.GetEquipmentByID)
-	e.PUT("/v1/equipment/:equipmentID", equipmentHandler.PutEquipmentByID)
+	group.POST("/user", userHandler.PostUserCreate)
+	group.POST("/user/login", userHandler.PostUserLogin)
+	group.POST("/user/logout", userHandler.PostUserLogout)
+	group.GET("/form", formHandler.GetFormList)
+	group.DELETE("/form/:formID", formHandler.DeleteForm)
+	group.GET("/form/:formID", formHandler.GetFormByID)
+	group.PATCH("/form/:formID", formHandler.PatchFormByID)
+	group.PUT("/form/:formID", formHandler.PutConfirmFormByID)
+	group.POST("/form/survey", formHandler.PostCreateNewSurvey)
+	group.GET("/equipment", equipmentHandler.GetEquipmentsList)
+	group.POST("/equipment", equipmentHandler.PostNewEquipment)
+	group.GET("/equipment/:equipmentID", equipmentHandler.GetEquipmentByID)
+	group.PUT("/equipment/:equipmentID", equipmentHandler.PutEquipmentByID)
 }
