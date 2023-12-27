@@ -66,6 +66,7 @@ func main() {
 	e := echo.New()
 
 	loggerInit(e, logger)
+	e.Use(middleware.CORS())
 	handlerInit(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
