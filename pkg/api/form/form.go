@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/sopuro3/klend-back/pkg/api"
 )
 
@@ -15,8 +16,8 @@ type (
 type issue struct {
 	Address   string    `json:"address"` // 128文字
 	Name      string    `json:"name"`    // 128文字
-	IssueID   IssueID   `json:"issueID"`
-	DisplayID DisplayID `json:"displayID"`
+	IssueID   IssueID   `json:"issueId"`
+	DisplayID DisplayID `json:"displayId"`
 	Note      string    `json:"note"` // 256文字
 }
 
@@ -26,7 +27,7 @@ type ResponseFormList struct {
 }
 
 type RequestDeleteForm struct {
-	IssueID IssueID `json:"issueID"`
+	IssueID IssueID `json:"issueId"`
 }
 
 // GetFormList TODO
