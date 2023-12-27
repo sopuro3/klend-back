@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/sopuro3/klend-back/pkg/api"
 )
 
@@ -15,24 +16,24 @@ type (
 type issue struct {
 	Address   string    `json:"address"` // 128文字
 	Name      string    `json:"name"`    // 128文字
-	IssueID   IssueID   `json:"issueID"`
-	DisplayID DisplayID `json:"displayID"`
+	IssueID   IssueID   `json:"issueId"`
+	DisplayID DisplayID `json:"displayId"`
 	Note      string    `json:"note"` // 256文字
 }
 
-type ResponseForm struct {
+type ResponseFormList struct {
 	Issue      []issue `json:"issue"`
 	TotalIssue int     `json:"totalIssue"`
 }
 
 type RequestDeleteForm struct {
-	IssueID IssueID `json:"issueID"`
+	IssueID IssueID `json:"issueId"`
 }
 
-// TODO
+// GetFormList TODO
 func GetFormList(ctx echo.Context) error {
 	total := 2
-	response := ResponseForm{
+	response := ResponseFormList{
 		Issue: []issue{
 			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", "テストデータ"},
 			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", "テストテスト"},
@@ -43,14 +44,14 @@ func GetFormList(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// TODO
+// DeleteForm TODO
 // DELETE /form/[:id]
 // フォームを削除
 func DeleteForm(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success delete"})
 }
 
-// TODO
+// PostCreateNewSurvey TODO
 // POST /form/survey
 // フォームを作成
 func PostCreateNewSurvey(c echo.Context) error {
