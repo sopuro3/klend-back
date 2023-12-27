@@ -30,7 +30,7 @@ type ResponseNewEquipment struct {
 	EquipmentID string `json:"id"`
 }
 
-// TODO
+// GetEquipmentsList TODO
 // GET /equipment
 func GetEquipmentsList(ctx echo.Context) error {
 	total := 2
@@ -45,7 +45,7 @@ func GetEquipmentsList(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// TODO
+// PostNewEquipment TODO
 // POST /equipment
 func PostNewEquipment(c echo.Context) error {
 	res := ResponseNewEquipment{"018c7b9f8c55708f803527a5528e83ed"}
@@ -53,7 +53,7 @@ func PostNewEquipment(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// TODO
+// GetEquipmentByID TODO
 // GET /equipment/[:equipmentId]
 func GetEquipmentByID(ctx echo.Context) error {
 	res := Equipment{
@@ -67,13 +67,13 @@ func GetEquipmentByID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
-// TODO
+// PutEquipmentByID TODO
 // PUT /equipment/[:equipmentId]
 func PutEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success update equipment"})
 }
 
-// TODO
+// DeleteEquipmentByID TODO
 // DELETE /equipment/[:equipmentId]
 func DeleteEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success delete equipment"})
