@@ -41,7 +41,7 @@ func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPass
 	salt := make([]byte, saltLen)
 	_, err := rand.Read(salt)
 	if err != nil {
-		return "", err
+		return password.EncodedPassword(""), fmt.Errorf("could not generate salt, %w", err)
 	}
 	// to hash
 	hashedPassword := createHashPassword(rawPassword, salt)
@@ -49,32 +49,36 @@ func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPass
 	return createEncodedPassword(hashedPassword, salt), nil
 }
 
-func (e *Argon2Encoder) IsMatchPassword(rawPassword string, encodedPassword password.EncodedPassword) (bool, error) {
+func (e *Argon2Encoder) IsMatchPassword(inputPassword string, storedPassword password.EncodedPassword) (bool, error) {
 	//,errTODO implement mesplit[7
-	inputPassword, err := e.EncodePassword(rawPassword)
+
+	hashedStoredPassword, stoerdSalt, err := decodeHash(storedPassword)
 	if err != nil {
 		return false, err
 	}
-	if inputPassword == encodedPassword {
+
+	inputHashedPassword := createHashPassword(inputPassword, stoerdSalt)
+
+	if string(inputHashedPassword) == string(hashedStoredPassword) {
 		return true, nil
 	}
 	return false, nil
 
 }
 
-func decodeHash(encodedPassword password.EncodedPassword) (hashedPassword, salt string, err error) {
+func decodeHash(encodedPassword password.EncodedPassword) (hashedPassword, salt []byte, err error) {
 	split := strings.Split(string(encodedPassword), "$")
-	if len(split) != 9 {
-		return "", "", errors.New("password is invalid format")
+	if len(split) != 6 {
+		return []byte(""), []byte(""), errors.New("password is invalid format")
 	}
-	decodedSalt, err := base64.StdEncoding.DecodeString(split[7])
+	decodedSalt, err := base64.StdEncoding.DecodeString(split[4])
 	if err != nil {
-		return "", "", err
+		return []byte(""), []byte(""), err
 	}
-	decodedHashedPassword, err := base64.StdEncoding.DecodeString(split[8])
+	decodedHashedPassword, err := base64.StdEncoding.DecodeString(split[5])
 	if err != nil {
-		return "", "", err
+		return []byte(""), []byte(""), err
 	}
 
-	return string(decodedHashedPassword), string(decodedSalt), nil
+	return decodedHashedPassword, decodedSalt, nil
 }
