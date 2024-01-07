@@ -14,6 +14,8 @@ type PlannedEquipment struct {
 	PlannedQuantity int `json:"planedQuantity"`
 }
 
+// ResponseFormData
+// Issueの取得、更新はこの方を利用して行う
 type ResponseFormData struct {
 	Issue           issue              `json:"issue"`
 	Equipments      []PlannedEquipment `json:"equipments"`
@@ -26,7 +28,7 @@ type ResponseFormData struct {
 func GetFormByID(ctx echo.Context) error {
 	//nolint:gomnd,lll
 	res := ResponseFormData{
-		Issue: issue{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", "テストデータ"},
+		Issue: issue{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", ISSUE_START, "テストデータ"},
 		//nolint
 		Equipments: []PlannedEquipment{
 
@@ -39,16 +41,16 @@ func GetFormByID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
-// PatchFormByID TODO
-// PATCH /form/[:formId]
+// PatchIssueByID TODO
+// PATCH /issue/:issueID
 // フォームを修正
-func PatchFormByID(c echo.Context) error {
+func PatchIssueByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success update planned quantity"})
 }
 
-// PutConfirmFormByID TODO
-// PUT /form/[:formId]/print
+// PutConfirmIssueByID TODO
+// PUT /issue/:issueID
 // フォームを確定する
-func PutConfirmFormByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success confirm form"})
+func PutConfirmIssueByID(c echo.Context) error {
+	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success confirm issue"})
 }
