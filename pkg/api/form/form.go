@@ -50,6 +50,9 @@ type RequestCreateNewIssue struct {
 		Quantity    int    `json:"quantity"`
 	} `json:"equipment"`
 }
+type ResponseCreateNewIssue struct {
+	IssueID string `json:"issueId"`
+}
 
 type RequestReturnItem struct {
 	Equipment []struct {
@@ -83,7 +86,7 @@ func DeleteForm(c echo.Context) error {
 // POST /issue/survey
 // フォームを作成
 func PostCreateNewSurvey(c echo.Context) error {
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success create new survey"})
+	return c.JSON(http.StatusOK, ResponseCreateNewIssue{"018ce372-f35a-705a-9695-ce8ac9c6eff3"})
 }
 
 // PostReturnItem TODO
