@@ -15,10 +15,10 @@ type (
 
 type issueStatus string
 
-// TODO
+// TODO 要作りこみ
 const (
-	ISSUE_START  issueStatus = "start"
-	ISSUE_FINISH issueStatus = "finish"
+	IssueStart  issueStatus = "start"
+	IssueFinish issueStatus = "finish"
 )
 
 type issue struct {
@@ -63,8 +63,8 @@ func GetFormList(ctx echo.Context) error {
 	total := 2
 	response := ResponseFormList{
 		Issue: []issue{
-			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", ISSUE_START, "テストデータ"},
-			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", ISSUE_FINISH, "テストテスト"},
+			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", IssueStart, "テストデータ"},
+			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", IssueFinish, "テストテスト"},
 		},
 		TotalIssue: total,
 	}
