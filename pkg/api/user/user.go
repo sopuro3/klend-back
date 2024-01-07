@@ -11,7 +11,7 @@ import (
 type RequestUser struct {
 	UserID   string `json:"userId"`   // uuidv7
 	Email    string `json:"email"`    // email 1~`128
-	UserName string `json:"userName"` // username 1~128
+	UserName string `json:"username"` // username 1~128
 	Password string `json:"password"` // password 12~
 }
 
