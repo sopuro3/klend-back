@@ -13,16 +13,31 @@ import (
 	"gorm.io/gorm"
 
 	equipmentHandler "github.com/sopuro3/klend-back/pkg/api/equipment"
-	formHandler "github.com/sopuro3/klend-back/pkg/api/form"
+	formHandler "github.com/sopuro3/klend-back/pkg/api/issue"
 	userHandler "github.com/sopuro3/klend-back/pkg/api/user"
+	"github.com/sopuro3/klend-back/pkg/domain/model"
 
 	_ "github.com/joho/godotenv/autoload"
 )
 
-type User struct {
-	gorm.Model
-	Name  string
-	Email string
+func AutoMigrate(db *gorm.DB) error {
+	if err := db.AutoMigrate(&model.User{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&model.Issue{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&model.LoanEntry{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&model.Equipment{}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
@@ -40,28 +55,30 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	if db.AutoMigrate(&User{}) != nil {
-		panic("failed to migrate")
+	if err := AutoMigrate(db); err != nil {
+		panic("failed to automigrate")
 	}
 
 	fmt.Println("migrated")
 
-	var count int64
+	// var count int64
 
-	db.Model(&User{}).Count(&count)
+	// db.Model(&User{}).Count(&count)
 
-	if count == 0 {
-		db.Create(&User{Name: "user01", Email: "xxxxxx@xxx01.com"})
-		db.Create(&User{Name: "user02", Email: "xxxxxx@xxx02.com"})
-		db.Create(&User{Name: "user03", Email: "xxxxxx@xxx03.com"})
-		fmt.Println("seeded")
-	}
+	/*
+		if count == 0 {
+			db.Create(&User{Name: "user01", Email: "xxxxxx@xxx01.com"})
+			db.Create(&User{Name: "user02", Email: "xxxxxx@xxx02.com"})
+			db.Create(&User{Name: "user03", Email: "xxxxxx@xxx03.com"})
+			fmt.Println("seeded")
+		}
 
-	var user User
+		var user User
 
-	db.First(&user)
+		db.First(&user)
 
-	fmt.Println(user)
+		fmt.Println(user)
+	*/
 
 	e := echo.New()
 
