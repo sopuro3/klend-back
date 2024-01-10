@@ -13,9 +13,9 @@ import (
 	"gorm.io/gorm"
 
 	equipmentHandler "github.com/sopuro3/klend-back/pkg/api/equipment"
-	formHandler "github.com/sopuro3/klend-back/pkg/api/issue"
+	issueHandler "github.com/sopuro3/klend-back/pkg/api/issue"
 	userHandler "github.com/sopuro3/klend-back/pkg/api/user"
-	"github.com/sopuro3/klend-back/pkg/domain/model"
+	"github.com/sopuro3/klend-back/pkg/model"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -61,29 +61,11 @@ func main() {
 
 	fmt.Println("migrated")
 
-	// var count int64
-
-	// db.Model(&User{}).Count(&count)
-
-	/*
-		if count == 0 {
-			db.Create(&User{Name: "user01", Email: "xxxxxx@xxx01.com"})
-			db.Create(&User{Name: "user02", Email: "xxxxxx@xxx02.com"})
-			db.Create(&User{Name: "user03", Email: "xxxxxx@xxx03.com"})
-			fmt.Println("seeded")
-		}
-
-		var user User
-
-		db.First(&user)
-
-		fmt.Println(user)
-	*/
-
 	e := echo.New()
 
 	loggerInit(e, logger)
 	e.Use(middleware.CORS())
+	e.Use(middleware.Recover())
 	handlerInit(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
@@ -141,13 +123,13 @@ func handlerInit(e *echo.Echo) {
 	group.POST("/user", userHandler.PostUserCreate)
 	group.POST("/user/login", userHandler.PostUserLogin)
 	group.POST("/user/logout", userHandler.PostUserLogout)
-	group.GET("/issue", formHandler.GetFormList)
-	group.DELETE("/issue/:issueID", formHandler.DeleteForm)
-	group.GET("/issue/:issueID", formHandler.GetFormByID)
-	group.PATCH("/issue/:issueID", formHandler.PatchIssueByID)
-	group.PUT("/issue/:issueID", formHandler.PutConfirmIssueByID)
-	group.POST("/issue/:issueID/return", formHandler.PostReturnItem)
-	group.POST("/issue/survey", formHandler.PostCreateNewSurvey)
+	group.GET("/issue", issueHandler.GetFormList)
+	group.DELETE("/issue/:issueID", issueHandler.DeleteForm)
+	group.GET("/issue/:issueID", issueHandler.GetFormByID)
+	group.PATCH("/issue/:issueID", issueHandler.PatchIssueByID)
+	group.PUT("/issue/:issueID", issueHandler.PutConfirmIssueByID)
+	group.POST("/issue/:issueID/return", issueHandler.PostReturnItem)
+	group.POST("/issue/survey", issueHandler.PostCreateNewSurvey)
 	group.GET("/equipment", equipmentHandler.GetEquipmentsList)
 	group.POST("/equipment", equipmentHandler.PostNewEquipment)
 	group.GET("/equipment/:equipmentID", equipmentHandler.GetEquipmentByID)

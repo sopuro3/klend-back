@@ -2,7 +2,8 @@ package repository
 
 import (
 	"github.com/google/uuid"
-	"github.com/sopuro3/klend-back/pkg/domain/model"
+
+	"github.com/sopuro3/klend-back/pkg/model"
 )
 
 type IssueRepository interface {
