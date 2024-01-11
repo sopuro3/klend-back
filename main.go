@@ -13,10 +13,11 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	equipmentHandler "github.com/sopuro3/klend-back/pkg/api/equipment"
+	"github.com/sopuro3/klend-back/pkg/api/equipment"
 	issueHandler "github.com/sopuro3/klend-back/pkg/api/issue"
 	userHandler "github.com/sopuro3/klend-back/pkg/api/user"
 	"github.com/sopuro3/klend-back/pkg/model"
+	"github.com/sopuro3/klend-back/pkg/repository"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -43,6 +44,7 @@ func AutoMigrate(db *gorm.DB) error {
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 
 	dsn := fmt.Sprintf(
 		"host=db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Tokyo",
@@ -71,7 +73,7 @@ func main() {
 	loggerInit(e, logger)
 	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
-	handlerInit(e)
+	handlerInit(e, db)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
@@ -116,7 +118,10 @@ func loggerInit(e *echo.Echo, logger *slog.Logger) {
 	}))
 }
 
-func handlerInit(e *echo.Echo) {
+func handlerInit(e *echo.Echo, db *gorm.DB) {
+	er := repository.NewEquipmentRepository(db)
+	equipmentHandler := equipment.NewEquipmentUseCase(er)
+
 	group := e.Group("/v1")
 	e.GET("/version", func(c echo.Context) error {
 		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck

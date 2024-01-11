@@ -24,31 +24,34 @@ type RequestLogout struct {
 	ID string `json:"id"` // email or username
 }
 
+// TODO
 func ValidateRequestUser(data *RequestUser) error {
-	// TODO
+	_ = data
+
 	return nil
 }
 
 // TODO
-func PostUserCreate(c echo.Context) error {
+func PostUserCreate(ctx echo.Context) error {
 	data := new(RequestUser)
-	if err := c.Bind(&data); err != nil {
-		return c.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
+	if err := ctx.Bind(&data); err != nil {
+		return ctx.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
 	}
 
 	if err := ValidateRequestUser(data); err != nil {
-		return c.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
+		return ctx.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
 	}
 
 	if err := CreateUser(data); err != nil {
-		return c.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
+		return ctx.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
 	}
 
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success crate user"})
+	return ctx.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success crate user"})
 }
 
+// TODO
 func CreateUser(data *RequestUser) error {
-	// TODO
+	_ = data
 
 	return nil
 }

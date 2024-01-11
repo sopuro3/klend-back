@@ -6,6 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/sopuro3/klend-back/pkg/api"
+	"github.com/sopuro3/klend-back/pkg/model"
+	"github.com/sopuro3/klend-back/pkg/repository"
 )
 
 type Equipment struct {
@@ -31,9 +33,33 @@ type ResponseNewEquipment struct {
 	EquipmentID string `json:"id"`
 }
 
+type EquipmentUseCase struct {
+	er repository.EquipmentRepository
+}
+
+func NewEquipmentUseCase(er repository.EquipmentRepository) *EquipmentUseCase {
+	return &EquipmentUseCase{
+		er: er,
+	}
+}
+
+func modelToResponse(eqModel model.Equipment) Equipment {
+	return Equipment{
+		EquipmentID:     eqModel.ID.String(),
+		Name:            eqModel.Name,
+		CurrentQuantity: 0, //TODO
+		MaxQuantity:     int(eqModel.MaxQuantity),
+		Note:            eqModel.Note,
+	}
+}
+
 // GetEquipmentsList TODO
 // GET /equipment
-func GetEquipmentsList(ctx echo.Context) error {
+func (eu EquipmentUseCase) GetEquipmentsList(ctx echo.Context) error {
+	equipments, err := eu.er.FindAll()
+	_ = equipments
+	_ = err
+
 	total := 2
 	response := ResponseEquipmentList{
 		//nolint:gomnd,lll
@@ -49,7 +75,7 @@ func GetEquipmentsList(ctx echo.Context) error {
 
 // PostNewEquipment TODO
 // POST /equipment
-func PostNewEquipment(c echo.Context) error {
+func (eu EquipmentUseCase) PostNewEquipment(c echo.Context) error {
 	res := ResponseNewEquipment{"018c7b9f8c55708f803527a5528e83ed"}
 
 	return c.JSON(http.StatusOK, res)
@@ -57,7 +83,7 @@ func PostNewEquipment(c echo.Context) error {
 
 // GetEquipmentByID TODO
 // GET /equipment/[:equipmentId]
-func GetEquipmentByID(ctx echo.Context) error {
+func (eu EquipmentUseCase) GetEquipmentByID(ctx echo.Context) error {
 	//nolint:gomnd
 	res := Equipment{
 		EquipmentID:     "018c7b9f8c55708f803527a5528e83ed",
@@ -72,12 +98,12 @@ func GetEquipmentByID(ctx echo.Context) error {
 
 // PutEquipmentByID TODO
 // PUT /equipment/[:equipmentId]
-func PutEquipmentByID(c echo.Context) error {
+func (eu EquipmentUseCase) PutEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success update equipment"})
 }
 
 // DeleteEquipmentByID TODO
 // DELETE /equipment/[:equipmentId]
-func DeleteEquipmentByID(c echo.Context) error {
+func (eu EquipmentUseCase) DeleteEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success delete equipment"})
 }
