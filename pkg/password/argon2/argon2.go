@@ -16,7 +16,7 @@ var (
 	algorithm        = "argon2id"
 	version          = argon2.Version
 	time      uint32 = 1
-	memory    uint32 = 64 //64MB
+	memory    uint32 = 64 * 1024 //64MB
 	threads   uint8  = 4
 	keyLen    uint32 = 32
 )
@@ -26,7 +26,7 @@ func NewArgon2Encoder() password.Encoder {
 }
 
 func createHashPassword(rawPassword string, salt []byte) []byte {
-	return argon2.IDKey([]byte(rawPassword), salt, time, memory*1024, threads, keyLen)
+	return argon2.IDKey([]byte(rawPassword), salt, time, memory, threads, keyLen)
 }
 
 func createEncodedPassword(hashedPassword, salt []byte) password.EncodedPassword {
@@ -34,7 +34,7 @@ func createEncodedPassword(hashedPassword, salt []byte) password.EncodedPassword
 	base64Salt := base64.RawStdEncoding.EncodeToString(salt)
 	base64HashedPassword := base64.RawStdEncoding.EncodeToString(hashedPassword)
 	// $<algorithm name>$v=<version>$m=<memory size>,t=<time>,p=<threads>$<b64 salt>$<b64 hash value>
-	return password.EncodedPassword(fmt.Sprintf("$%s$v=%d$m=%d,t=%d,p=%d$%s$%s$", algorithm, version, memory, time, threads, base64Salt, base64HashedPassword))
+	return password.EncodedPassword(fmt.Sprintf("$%s$v=%d$m=%d,t=%d,p=%d$%s$%s", algorithm, version, memory, time, threads, base64Salt, base64HashedPassword))
 }
 func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPassword, error) {
 	saltLen := 32
@@ -52,12 +52,12 @@ func (e *Argon2Encoder) EncodePassword(rawPassword string) (password.EncodedPass
 func (e *Argon2Encoder) IsMatchPassword(inputPassword string, storedPassword password.EncodedPassword) (bool, error) {
 	//,errTODO implement mesplit[7
 
-	hashedStoredPassword, stoerdSalt, err := decodeHash(storedPassword)
+	hashedStoredPassword, storedSalt, err := decodeHash(storedPassword)
 	if err != nil {
 		return false, err
 	}
 
-	inputHashedPassword := createHashPassword(inputPassword, stoerdSalt)
+	inputHashedPassword := createHashPassword(inputPassword, storedSalt)
 
 	if string(inputHashedPassword) == string(hashedStoredPassword) {
 		return true, nil
@@ -71,11 +71,11 @@ func decodeHash(encodedPassword password.EncodedPassword) (hashedPassword, salt 
 	if len(split) != 6 {
 		return []byte(""), []byte(""), errors.New("password is invalid format")
 	}
-	decodedSalt, err := base64.StdEncoding.DecodeString(split[4])
+	decodedSalt, err := base64.RawStdEncoding.DecodeString(split[4])
 	if err != nil {
 		return []byte(""), []byte(""), err
 	}
-	decodedHashedPassword, err := base64.StdEncoding.DecodeString(split[5])
+	decodedHashedPassword, err := base64.RawStdEncoding.DecodeString(split[5])
 	if err != nil {
 		return []byte(""), []byte(""), err
 	}
