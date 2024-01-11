@@ -3,9 +3,10 @@ package argon2
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/sopuro3/klend-back/pkg/password"
 	"reflect"
 	"testing"
+
+	"github.com/sopuro3/klend-back/pkg/password"
 )
 
 // $argon2id$v=19$m=65536,t=1,p=4$MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI$WBo5t5PvTcN/kEJbQLWhYcF4d+n+r6hSdLX+6aJymIY
@@ -30,7 +31,6 @@ func Test_createHashPassword(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			got := createHashPassword(tt.args.rawPassword, tt.args.salt)
 			b64Got := base64.RawStdEncoding.EncodeToString(got)
 			if !reflect.DeepEqual(b64Got, tt.want) {
@@ -164,7 +164,6 @@ func TestArgon2Encoder_EncodePassword(t *testing.T) {
 			t.Errorf("Generate same salt")
 			return
 		}
-
 	})
 }
 
