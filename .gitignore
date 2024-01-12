@@ -23,3 +23,6 @@ go.work
 .env
 postgres_volume/
 klend-back
+
+cover.out
+cover.html
