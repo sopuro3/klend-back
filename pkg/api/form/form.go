@@ -45,20 +45,20 @@ type RequestCreateNewIssue struct {
 		Name    string `json:"name"`    // 128文字
 		Note    string `json:"note"`    // 256文字
 	} `json:"issue"`
-	Equipment []struct {
+	Equipments []struct {
 		EquipmentID string `json:"equipmentId"`
 		Quantity    int    `json:"quantity"`
-	} `json:"equipment"`
+	} `json:"equipments"`
 }
 type ResponseCreateNewIssue struct {
 	IssueID string `json:"issueId"`
 }
 
 type RequestReturnItem struct {
-	Equipment []struct {
+	Equipments []struct {
 		EquipmentID    string `json:"equipmentId"`
 		ReturnQuantity int    `json:"returnQuantity"`
-	} `json:"equipment"`
+	} `json:"equipments"`
 }
 
 // GetFormList TODO
