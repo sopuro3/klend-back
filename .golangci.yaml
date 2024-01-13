@@ -12,11 +12,11 @@ linters:
     - scopelint
     - structcheck
     - varcheck
-
     - exhaustruct # フィールドの明示初期化を強制するやつ。gormと合わない
     - forbidigo # 指定した識別子の使用を禁止するやつ。使いみちを思いつけない
     - godot # コメント末尾に.を強制するやつ。日本語なのでいらない
     - gosmopolitan # 日本語とかtime.Local使ったら怒る。klendはi18nもi10nもいらないと思う
+    - testpackage # 公開していない関数のテストがしたいため
 
 linters-settings:
   gci:
