@@ -25,7 +25,7 @@ const (
 )
 
 func NewArgon2Encoder() *Argon2Encoder {
-	return new(Argon2Encoder)
+	return &Argon2Encoder{}
 }
 
 func createHashPassword(rawPassword string, salt []byte) []byte {
