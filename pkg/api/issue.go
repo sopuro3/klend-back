@@ -1,11 +1,9 @@
-package issue
+package api
 
 import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-
-	"github.com/sopuro3/klend-back/pkg/api"
 )
 
 type (
@@ -79,7 +77,7 @@ func GetFormList(ctx echo.Context) error {
 // DELETE /issue/:issueId
 // フォームを削除
 func DeleteForm(c echo.Context) error {
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success delete"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success delete"})
 }
 
 // PostCreateNewSurvey TODO
@@ -93,5 +91,5 @@ func PostCreateNewSurvey(c echo.Context) error {
 // POST /issue/:issueID/return
 // 資機材の返却
 func PostReturnItem(c echo.Context) error {
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success return item"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success return item"})
 }

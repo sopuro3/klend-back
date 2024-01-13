@@ -13,15 +13,14 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/sopuro3/klend-back/pkg/api/equipment"
-	issueHandler "github.com/sopuro3/klend-back/pkg/api/issue"
-	userHandler "github.com/sopuro3/klend-back/pkg/api/user"
+	"github.com/sopuro3/klend-back/pkg/api"
 	"github.com/sopuro3/klend-back/pkg/model"
 	"github.com/sopuro3/klend-back/pkg/repository"
 
 	_ "github.com/joho/godotenv/autoload"
 )
 
+//nolint:wrapcheck
 func AutoMigrate(db *gorm.DB) error {
 	if err := db.AutoMigrate(&model.User{}); err != nil {
 		return err
@@ -120,7 +119,8 @@ func loggerInit(e *echo.Echo, logger *slog.Logger) {
 
 func handlerInit(e *echo.Echo, db *gorm.DB) {
 	er := repository.NewEquipmentRepository(db)
-	equipmentHandler := equipment.NewEquipmentUseCase(er)
+	lr := repository.NewLoanEntryRepository(db)
+	equipmentHandler := api.NewEquipmentUseCase(er, lr)
 
 	group := e.Group("/v1")
 	e.GET("/version", func(c echo.Context) error {
@@ -130,16 +130,16 @@ func handlerInit(e *echo.Echo, db *gorm.DB) {
 		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
 	})
 
-	group.POST("/user", userHandler.PostUserCreate)
-	group.POST("/user/login", userHandler.PostUserLogin)
-	group.POST("/user/logout", userHandler.PostUserLogout)
-	group.GET("/issue", issueHandler.GetFormList)
-	group.DELETE("/issue/:issueID", issueHandler.DeleteForm)
-	group.GET("/issue/:issueID", issueHandler.GetFormByID)
-	group.PATCH("/issue/:issueID", issueHandler.PatchIssueByID)
-	group.PUT("/issue/:issueID", issueHandler.PutConfirmIssueByID)
-	group.POST("/issue/:issueID/return", issueHandler.PostReturnItem)
-	group.POST("/issue/survey", issueHandler.PostCreateNewSurvey)
+	group.POST("/user", api.PostUserCreate)
+	group.POST("/user/login", api.PostUserLogin)
+	group.POST("/user/logout", api.PostUserLogout)
+	group.GET("/issue", api.GetFormList)
+	group.DELETE("/issue/:issueID", api.DeleteForm)
+	group.GET("/issue/:issueID", api.GetFormByID)
+	group.PATCH("/issue/:issueID", api.PatchIssueByID)
+	group.PUT("/issue/:issueID", api.PutConfirmIssueByID)
+	group.POST("/issue/:issueID/return", api.PostReturnItem)
+	group.POST("/issue/survey", api.PostCreateNewSurvey)
 	group.GET("/equipment", equipmentHandler.GetEquipmentsList)
 	group.POST("/equipment", equipmentHandler.PostNewEquipment)
 	group.GET("/equipment/:equipmentID", equipmentHandler.GetEquipmentByID)
@@ -155,21 +155,23 @@ func Seed(db *gorm.DB) {
 		return
 	}
 
-	//nolint:lll
+	//nolint:gomnd,lll
 	equipments := []*model.Equipment{
 		{Model: model.Model{ID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed")}, Name: "角スコップ", MaxQuantity: 20, Note: "てすとてすとてすと"},
 		{Model: model.Model{ID: uuid.MustParse("018c7ba8d2df7adcaf3dbe411ce1cb60")}, Name: "バケツ", MaxQuantity: 99, Note: "てすとてすとてすと"},
 	}
 
-	//nolint:lll
+	//nolint:gomnd,lll
 	loanEntries := []*model.LoanEntry{
 		{Model: model.Model{ID: uuid.MustParse("018cf5eb-c686-75b7-8413-1d61612bd1b9")}, EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Quantity: 10},
 		{Model: model.Model{ID: uuid.MustParse("018cf5ec-0faa-7378-9dea-e832670afdc7")}, EquipmentID: uuid.MustParse("018c7ba8d2df7adcaf3dbe411ce1cb60"), Quantity: 20},
+		// {Model: model.Model{ID: uuid.MustParse("018cfd8b-ee64-71c2-929c-e8d1cca5c2f0")}, EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Quantity: 5},
 	}
 
 	//nolint:lll
 	issues := []*model.Issue{
-		{Model: model.Model{ID: uuid.MustParse("018c7765-ffd5-724f-aa7f-227175f54d3f")}, Address: "小森野1-1-1", Name: "久留米太郎", DisplayID: "0001", Status: "start", Note: "テストデータ", LoanEntries: loanEntries},
+		{Model: model.Model{ID: uuid.MustParse("018c7765-ffd5-724f-aa7f-227175f54d3f")}, Address: "小森野1-1-1", Name: "久留米太郎", DisplayID: "0001", Status: "start", Note: "テストデータ", IsConfirmed: false, LoanEntries: loanEntries[0:2]},
+		// {Model: model.Model{ID: uuid.MustParse("018cfd89-67cd-77f2-955e-da5439bb8d7e")}, Address: "小森野1-1-2", Name: "久留米次郎", DisplayID: "0002", Status: "start", Note: "テストデータ", IsConfirmed: true, LoanEntries: loanEntries[2:]},
 	}
 
 	if err := db.Create(&equipments).Error; err != nil {

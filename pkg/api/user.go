@@ -1,11 +1,9 @@
-package user
+package api
 
 import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-
-	"github.com/sopuro3/klend-back/pkg/api"
 )
 
 type RequestUser struct {
@@ -35,18 +33,18 @@ func ValidateRequestUser(data *RequestUser) error {
 func PostUserCreate(ctx echo.Context) error {
 	data := new(RequestUser)
 	if err := ctx.Bind(&data); err != nil {
-		return ctx.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "error bad request"})
 	}
 
 	if err := ValidateRequestUser(data); err != nil {
-		return ctx.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "error bad request"})
 	}
 
 	if err := CreateUser(data); err != nil {
-		return ctx.JSON(http.StatusBadRequest, api.ResponseMessage{Status: api.ERROR, Message: "error bad request"})
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "error bad request"})
 	}
 
-	return ctx.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success crate user"})
+	return ctx.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success crate user"})
 }
 
 // TODO
@@ -58,10 +56,10 @@ func CreateUser(data *RequestUser) error {
 
 // TODO
 func PostUserLogin(c echo.Context) error {
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success login"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success login"})
 }
 
 // TODO
 func PostUserLogout(c echo.Context) error {
-	return c.JSON(http.StatusOK, api.ResponseMessage{Status: api.SUCCESS, Message: "success logout"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success logout"})
 }

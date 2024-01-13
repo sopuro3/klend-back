@@ -1,3 +1,4 @@
+//nolint:ireturn // domainとinfraにわけたときにはinterfaceを返す必要がある
 package repository
 
 import (

@@ -1,4 +1,4 @@
-//nolint:lll,wsl,loopclosure,varnamelen
+//nolint:lll,wsl,varnamelen
 package argon2
 
 import (
