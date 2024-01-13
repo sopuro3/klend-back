@@ -25,7 +25,7 @@ type ResponseFormData struct {
 func GetFormByID(ctx echo.Context) error {
 	//nolint:gomnd,lll
 	res := ResponseFormData{
-		Issue: issue{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", IssueStart, "テストデータ"},
+		Issue: issue{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", StatusSurvey, "テストデータ"},
 		//nolint
 		Equipments: []PlannedEquipment{
 			{Equipment{EquipmentID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"}, 5},
