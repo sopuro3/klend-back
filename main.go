@@ -170,7 +170,7 @@ func Seed(db *gorm.DB) {
 
 	//nolint:lll
 	issues := []*model.Issue{
-		{Model: model.Model{ID: uuid.MustParse("018c7765-ffd5-724f-aa7f-227175f54d3f")}, Address: "小森野1-1-1", Name: "久留米太郎", DisplayID: "0001", Status: "start", Note: "テストデータ", IsConfirmed: false, LoanEntries: loanEntries[0:2]},
+		{Model: model.Model{ID: uuid.MustParse("018c7765-ffd5-724f-aa7f-227175f54d3f")}, Address: "小森野1-1-1", Name: "久留米太郎", DisplayID: "0001", Status: "survey", Note: "テストデータ", LoanEntries: loanEntries[0:2]},
 		// {Model: model.Model{ID: uuid.MustParse("018cfd89-67cd-77f2-955e-da5439bb8d7e")}, Address: "小森野1-1-2", Name: "久留米次郎", DisplayID: "0002", Status: "start", Note: "テストデータ", IsConfirmed: true, LoanEntries: loanEntries[2:]},
 	}
 

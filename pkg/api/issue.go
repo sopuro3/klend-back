@@ -11,12 +11,14 @@ type (
 	DisplayID string // 数字4桁
 )
 
-type issueStatus string
+type IssueStatus string
 
-// TODO 要作りこみ
 const (
-	IssueStart  issueStatus = "start"
-	IssueFinish issueStatus = "finish"
+	StatusSurvey         IssueStatus = "survey"  // 初期調査
+	StatusEquipmentCheck IssueStatus = "check"   // 資機材確認
+	StatusConfirm        IssueStatus = "confirm" // 資機材確認(確定)
+	StatusReturn         IssueStatus = "return"  // 返却(未納アリ)
+	StatusFinish         IssueStatus = "finish"  // 返却完了
 )
 
 type issue struct {
@@ -24,7 +26,7 @@ type issue struct {
 	Name      string      `json:"name"`    // 128文字
 	IssueID   IssueID     `json:"issueId"`
 	DisplayID DisplayID   `json:"displayId"`
-	Status    issueStatus `json:"status"`
+	Status    IssueStatus `json:"status"`
 	Note      string      `json:"note"` // 256文字
 }
 
@@ -64,8 +66,8 @@ func GetFormList(ctx echo.Context) error {
 	total := 2
 	response := ResponseFormList{
 		Issue: []issue{
-			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", IssueStart, "テストデータ"},
-			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", IssueFinish, "テストテスト"},
+			{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", StatusSurvey, "テストデータ"},
+			{"浄南町15-3", "久留米次郎", "018c7772-2202-7445-aa24-1bb55e300bdb", "0002", StatusFinish, "テストテスト"},
 		},
 		TotalIssue: total,
 	}
