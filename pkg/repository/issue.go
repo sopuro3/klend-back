@@ -37,10 +37,15 @@ func (ir *issueRepository) Find(id uuid.UUID) (*model.Issue, error) {
 }
 
 func (ir *issueRepository) FindAll() ([]*model.Issue, error) {
-	issues := []*model.Issue{}
+	var issues []*model.Issue
 
-	if err := ir.db.Find(&issues).Error; err != nil {
-		return []*model.Issue{}, err
+	result := ir.db.Find(&issues)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, nil
 	}
 
 	return issues, nil
