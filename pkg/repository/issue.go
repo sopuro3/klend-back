@@ -36,16 +36,14 @@ func (ir *issueRepository) Find(id uuid.UUID) (*model.Issue, error) {
 	return &issue, nil
 }
 
+// FindAll 
+// レコードが存在しない場合は、len([]*model.Issue)==0を返す
 func (ir *issueRepository) FindAll() ([]*model.Issue, error) {
 	var issues []*model.Issue
 
 	result := ir.db.Find(&issues)
 	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return nil, nil
+		return issues, result.Error
 	}
 
 	return issues, nil
