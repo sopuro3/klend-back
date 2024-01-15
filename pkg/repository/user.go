@@ -91,19 +91,16 @@ func (u *userRepository) FindAll() ([]*model.User, error) {
 }
 
 func (u *userRepository) FindExistUser(user *model.User) (bool, error) {
-	var users []*model.User
-	if user.ExternalUserID == "" || user.Email == "" {
+	if user.ExternalUserID == "" && user.Email == "" {
 		return false, ErrEmptyData
 	}
-	result := u.db.Or(&model.User{ExternalUserID: user.ExternalUserID}).Or(&model.User{Email: user.Email}).Find(&users)
-	if result.Error != nil {
-		return false, result.Error
+	var count int64
+	if err := u.db.Model(&model.User{}).Or(&model.User{ExternalUserID: user.ExternalUserID}).Or(&model.User{Email: user.Email}).Count(&count).Error; err != nil {
+		return false, err
 	}
-
-	if result.RowsAffected != 0 {
+	if count > 0 {
 		return true, nil
 	}
-
 	return false, nil
 }
 func (u *userRepository) Create(user *model.User) error {
