@@ -18,4 +18,12 @@ down:
 	docker compose down
 clean:
 	docker compose down && docker volume rm klend-back_postgres_volume
+sand:
+	go run cmd/sand/sand.go
+up-sand:
+	docker compose -f cmd/sand/compose.yml up -d
+up-sand-front:
+	docker compose -f cmd/sand/compose.yml up -d
+down-sand:
+	docker compose -f cmd/sand/compose.yml down
 .PHONY: ci test coverage up up-front psql down clean

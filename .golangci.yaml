@@ -33,3 +33,7 @@ linters-settings:
   wrapcheck:
     ignoreSigs:
       - .JSON(
+
+run:
+  skip-dirs:
+    - cmd/sand
