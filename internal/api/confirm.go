@@ -22,7 +22,7 @@ type ResponseFormData struct {
 // GetFormByID TODO
 // GET /form/[:formId]
 // フォームのデータを取得
-func GetFormByID(ctx echo.Context) error {
+func (ir IssueUseCase) GetFormByID(ctx echo.Context) error {
 	//nolint:gomnd,lll
 	res := ResponseFormData{
 		Issue: issue{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", StatusSurvey, "テストデータ"},
@@ -40,13 +40,13 @@ func GetFormByID(ctx echo.Context) error {
 // PatchIssueByID TODO
 // PATCH /issue/:issueID
 // フォームを修正
-func PatchIssueByID(c echo.Context) error {
+func (ir IssueUseCase) PatchIssueByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success update planned quantity"})
 }
 
 // PutConfirmIssueByID TODO
 // PUT /issue/:issueID
 // フォームを確定する
-func PutConfirmIssueByID(c echo.Context) error {
+func (ir IssueUseCase) PutConfirmIssueByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success confirm issue"})
 }
