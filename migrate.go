@@ -1,12 +1,14 @@
 package main
 
 import (
+	"log/slog"
+
 	"github.com/google/uuid"
+	"gorm.io/gorm"
+
 	"github.com/sopuro3/klend-back/pkg/model"
 	"github.com/sopuro3/klend-back/pkg/password"
 	"github.com/sopuro3/klend-back/pkg/password/argon2"
-	"gorm.io/gorm"
-	"log/slog"
 )
 
 //nolint:wrapcheck
@@ -29,6 +31,7 @@ func AutoMigrate(db *gorm.DB) error {
 
 	return nil
 }
+
 func Seed(db *gorm.DB) {
 	var count int64
 
@@ -59,14 +62,22 @@ func Seed(db *gorm.DB) {
 
 	passwordEncoder := password.Encoder(argon2.NewArgon2Encoder())
 	hashedPassword1, err := passwordEncoder.EncodePassword("password")
+	if err != nil {
+		slog.Warn(err.Error())
+	}
+
 	hashedPassword2, err := passwordEncoder.EncodePassword("test")
 	if err != nil {
-		slog.Warn("err", err)
+		slog.Warn(err.Error())
 	}
+
 	users := []*model.User{
+		//nolint:lll
 		{Model: model.Model{ID: uuid.MustParse("018d08be-febd-7763-b466-05174ab3f4d1")}, ExternalUserID: "admin", Email: "test@example.com", UserName: "久留米太郎", HashedPassword: string(hashedPassword1)},
+		//nolint:lll
 		{Model: model.Model{ID: uuid.MustParse("018d08c7-4169-7550-9f9b-bba288c03882")}, ExternalUserID: "user1", Email: "user1@example.com", UserName: "久留米次郎", HashedPassword: string(hashedPassword2)},
 	}
+
 	if err := db.Create(&equipments).Error; err != nil {
 		slog.Warn("%+v", err)
 	}

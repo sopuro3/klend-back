@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/google/uuid"
+
 	"github.com/sopuro3/klend-back/pkg/password"
 )
 

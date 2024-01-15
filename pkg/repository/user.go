@@ -1,7 +1,9 @@
+//nolint:nilnil,ireturn
 package repository
 
 import (
 	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -34,6 +36,7 @@ func (u *userRepository) Find(id uuid.UUID) (*model.User, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
@@ -46,6 +49,7 @@ func (u *userRepository) FindByUserID(externalUserID string) (*model.User, error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
@@ -58,6 +62,7 @@ func (u *userRepository) FindByUserName(userName string) (*model.User, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
@@ -70,6 +75,7 @@ func (u *userRepository) FindByEmail(email string) (*model.User, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
@@ -79,6 +85,7 @@ func (u *userRepository) FindByEmail(email string) (*model.User, error) {
 func (u *userRepository) FindAll() ([]*model.User, error) {
 	var users []*model.User
 	result := u.db.Find(&users)
+
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -94,22 +101,34 @@ func (u *userRepository) FindExistUser(user *model.User) (bool, error) {
 	if user.ExternalUserID == "" && user.Email == "" {
 		return false, ErrEmptyData
 	}
+
 	var count int64
-	if err := u.db.Model(&model.User{}).Or(&model.User{ExternalUserID: user.ExternalUserID}).Or(&model.User{Email: user.Email}).Count(&count).Error; err != nil {
+	if err := u.db.Model(&model.User{}).
+		Or(&model.User{ExternalUserID: user.ExternalUserID}).
+		Or(&model.User{Email: user.Email}).Count(&count).Error; err != nil {
 		return false, err
 	}
+
 	if count > 0 {
 		return true, nil
 	}
+
 	return false, nil
 }
+
 func (u *userRepository) Create(user *model.User) error {
-	if user.ID == (uuid.UUID{}) || user.ExternalUserID == "" || user.Email == "" || user.UserName == "" || user.HashedPassword == "" {
+	if user.ID == (uuid.UUID{}) ||
+		user.ExternalUserID == "" ||
+		user.Email == "" ||
+		user.UserName == "" ||
+		user.HashedPassword == "" {
 		return ErrEmptyData
 	}
+
 	if err := u.db.Create(&user).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -117,6 +136,7 @@ func (u *userRepository) Update(user *model.User) error {
 	if err := u.db.Save(&user).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -124,8 +144,10 @@ func (u *userRepository) Delete(user *model.User) error {
 	if user.ID == (uuid.UUID{}) {
 		return ErrIDIsEmpty
 	}
+
 	if err := u.db.Delete(&user).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
