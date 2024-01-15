@@ -1,4 +1,4 @@
-package main
+package migrate
 
 import (
 	"log/slog"
@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"github.com/sopuro3/klend-back/pkg/model"
+	"github.com/sopuro3/klend-back/internal/model"
 	"github.com/sopuro3/klend-back/pkg/password"
 	"github.com/sopuro3/klend-back/pkg/password/argon2"
 )
@@ -32,6 +32,7 @@ func AutoMigrate(db *gorm.DB) error {
 	return nil
 }
 
+//nolint:funlen
 func Seed(db *gorm.DB) {
 	var count int64
 
@@ -61,6 +62,7 @@ func Seed(db *gorm.DB) {
 	}
 
 	passwordEncoder := password.Encoder(argon2.NewArgon2Encoder())
+
 	hashedPassword1, err := passwordEncoder.EncodePassword("password")
 	if err != nil {
 		slog.Warn(err.Error())

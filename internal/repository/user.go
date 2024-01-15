@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"github.com/sopuro3/klend-back/pkg/model"
+	"github.com/sopuro3/klend-back/internal/model"
 )
 
 type UserRepository interface {
