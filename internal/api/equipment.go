@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	"github.com/sopuro3/klend-back/pkg/model"
-	"github.com/sopuro3/klend-back/pkg/repository"
+	"github.com/sopuro3/klend-back/internal/model"
+	"github.com/sopuro3/klend-back/internal/repository"
 )
 
 type Equipment struct {

@@ -12,8 +12,9 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/sopuro3/klend-back/pkg/api"
-	"github.com/sopuro3/klend-back/pkg/repository"
+	"github.com/sopuro3/klend-back/internal/api"
+	"github.com/sopuro3/klend-back/internal/migrate"
+	"github.com/sopuro3/klend-back/internal/repository"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -34,14 +35,14 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	if err := AutoMigrate(db); err != nil {
+	if err := migrate.AutoMigrate(db); err != nil {
 		panic("failed to automigrate")
 	}
 
 	fmt.Println("migrated")
 
 	if develop, ok := os.LookupEnv("DEVELOP"); ok && develop != "0" {
-		Seed(db)
+		migrate.Seed(db)
 	}
 
 	e := echo.New()
