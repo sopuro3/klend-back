@@ -2,8 +2,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -36,7 +34,7 @@ func (ir *issueRepository) Find(id uuid.UUID) (*model.Issue, error) {
 	return &issue, nil
 }
 
-// FindAll 
+// FindAll
 // レコードが存在しない場合は、len([]*model.Issue)==0を返す
 func (ir *issueRepository) FindAll() ([]*model.Issue, error) {
 	var issues []*model.Issue
@@ -66,9 +64,8 @@ func (ir *issueRepository) Update(issue *model.Issue) error {
 }
 
 func (ir *issueRepository) Delete(issue *model.Issue) error {
-	if issue.ID == uuid.MustParse("00000000-0000-0000-0000-000000000000") {
-		//nolint:goerr113,wrapcheck
-		return fmt.Errorf("failed delete issue. ID is nil")
+	if issue.ID == (uuid.UUID{}) {
+		return ErrIDIsEmpty
 	}
 
 	if err := ir.db.Delete(issue).Error; err != nil {
