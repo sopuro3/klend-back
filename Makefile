@@ -26,4 +26,4 @@ up-sand-front:
 	docker compose -f cmd/sand/compose.yml up
 down-sand:
 	docker compose -f cmd/sand/compose.yml down
-.PHONY: ci test coverage up up-front psql down clean
+.PHONY: ci test coverage up up-front psql down clean sand up-sand up-sand-front down-sand
