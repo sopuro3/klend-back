@@ -11,11 +11,11 @@ import (
 )
 
 type Equipment struct {
-	EquipmentID     string `json:"equipmentId"`
-	Name            string `json:"name"`
-	MaxQuantity     int    `json:"maxQuantity"`
-	CurrentQuantity int    `json:"currentQuantity"`
-	Note            string `json:"note"`
+	EquipmentID     uuid.UUID `json:"equipmentId"`
+	Name            string    `json:"name"`
+	MaxQuantity     int32     `json:"maxQuantity"`
+	CurrentQuantity int32     `json:"currentQuantity"`
+	Note            string    `json:"note"`
 }
 type ResponseEquipmentList struct {
 	Equipments      []Equipment `json:"equipments"`
@@ -24,8 +24,8 @@ type ResponseEquipmentList struct {
 
 type RequestNewEquipment struct {
 	Name            string `json:"name"`
-	MaxQuantity     int    `json:"maxQuantity"`
-	CurrentQuantity int    `json:"currentQuantity"`
+	MaxQuantity     int32  `json:"maxQuantity"`
+	CurrentQuantity int32  `json:"currentQuantity"`
 	Note            string `json:"note"`
 }
 
@@ -53,10 +53,10 @@ func (eu EquipmentUseCase) modelToResponse(eqModel model.Equipment) (Equipment, 
 	}
 
 	return Equipment{
-		EquipmentID:     eqModel.ID.String(),
+		EquipmentID:     eqModel.ID,
 		Name:            eqModel.Name,
-		CurrentQuantity: int(currentQuantity),
-		MaxQuantity:     int(eqModel.MaxQuantity),
+		CurrentQuantity: currentQuantity,
+		MaxQuantity:     eqModel.MaxQuantity,
 		Note:            eqModel.Note,
 	}, nil
 }
@@ -92,8 +92,8 @@ func (eu EquipmentUseCase) GetEquipmentsList(ctx echo.Context) error {
 	response := ResponseEquipmentList{
 		//nolint:gomnd,lll
 		Equipments: []Equipment{
-			{EquipmentID: "018c7b9f8c55708f803527a5528e83ed", Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
-			{EquipmentID: "018c7ba8d2df7adcaf3dbe411ce1cb60", Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
+			{EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
+			{EquipmentID: uuid.MustParse("018c7ba8d2df7adcaf3dbe411ce1cb60"), Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
 		},
 		TotalEquipments: total,
 	}
@@ -114,7 +114,7 @@ func (eu EquipmentUseCase) PostNewEquipment(c echo.Context) error {
 func (eu EquipmentUseCase) GetEquipmentByID(ctx echo.Context) error {
 	//nolint:gomnd
 	res := Equipment{
-		EquipmentID:     "018c7b9f8c55708f803527a5528e83ed",
+		EquipmentID:     uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"),
 		Name:            "角スコップ",
 		MaxQuantity:     20,
 		CurrentQuantity: 10,
@@ -127,11 +127,11 @@ func (eu EquipmentUseCase) GetEquipmentByID(ctx echo.Context) error {
 // PutEquipmentByID TODO
 // PUT /equipment/[:equipmentId]
 func (eu EquipmentUseCase) PutEquipmentByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success update equipment"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: Success, Message: "success update equipment"})
 }
 
 // DeleteEquipmentByID TODO
 // DELETE /equipment/[:equipmentId]
 func (eu EquipmentUseCase) DeleteEquipmentByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success delete equipment"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: Success, Message: "success delete equipment"})
 }
