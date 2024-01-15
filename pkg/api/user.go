@@ -22,14 +22,12 @@ type RequestLogout struct {
 	ID string `json:"id"` // email or username
 }
 
-// TODO
 func ValidateRequestUser(data *RequestUser) error {
 	_ = data
 
 	return nil
 }
 
-// TODO
 func PostUserCreate(ctx echo.Context) error {
 	data := new(RequestUser)
 	if err := ctx.Bind(&data); err != nil {
@@ -47,19 +45,16 @@ func PostUserCreate(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success crate user"})
 }
 
-// TODO
 func CreateUser(data *RequestUser) error {
 	_ = data
 
 	return nil
 }
 
-// TODO
 func PostUserLogin(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success login"})
 }
 
-// TODO
 func PostUserLogout(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success logout"})
 }
