@@ -127,11 +127,11 @@ func (eu EquipmentUseCase) GetEquipmentByID(ctx echo.Context) error {
 // PutEquipmentByID TODO
 // PUT /equipment/[:equipmentId]
 func (eu EquipmentUseCase) PutEquipmentByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, ResponseMessage{Status: Success, Message: "success update equipment"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success update equipment"})
 }
 
 // DeleteEquipmentByID TODO
 // DELETE /equipment/[:equipmentId]
 func (eu EquipmentUseCase) DeleteEquipmentByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, ResponseMessage{Status: Success, Message: "success delete equipment"})
+	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success delete equipment"})
 }
