@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/sopuro3/klend-back/internal/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/sopuro3/klend-back/internal/repository"
 )
 
 type (
@@ -71,7 +72,6 @@ func NewIssueUseCase(ir repository.IssueRepository) *IssueUseCase {
 
 // GetFormList TODO
 func (ir IssueUseCase) GetFormList(ctx echo.Context) error {
-
 	total := 2
 	response := ResponseFormList{
 		Issue: []issue{
