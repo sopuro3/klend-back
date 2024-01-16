@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -22,11 +23,16 @@ import (
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
+
+	// klend-backをdocker compose 以外で動かすための設定
+	localRun := flag.Bool("local", false, "true: klend-back run on local. false: klend-back run on docker compose")
+	flag.Parse()
+
 	var dsn string
-	if os.Getenv("DOCKER_COMPOSE") == "0" {
+	if os.Getenv("DOCKER_COMPOSE") == "0" || *localRun {
 		dsn = fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Tokyo",
-			"localhost",
+			os.Getenv("POSTGRES_HOST"),
 			os.Getenv("POSTGRES_USER"),
 			os.Getenv("POSTGRES_PASSWORD"),
 			os.Getenv("POSTGRES_DB"),

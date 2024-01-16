@@ -29,5 +29,5 @@ up-sand-front:
 down-sand:
 	docker compose -f cmd/sand/compose.yml down
 run:
-	go run ./klend.go
+	go run ./klend.go --local
 .PHONY: ci test coverage up up-front psql down clean sand up-sand up-sand-front down-sand run
