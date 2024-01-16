@@ -8,8 +8,10 @@ coverage:
 	go test -v -cover ./... -coverprofile=cover.out
 	go tool cover -html=cover.out -o cover.html
 up:
+	docker compose build
 	docker compose up -d
 up-front:
+	docker compose build
 	docker compose up
 psql:
 	docker compose up -d
@@ -26,4 +28,6 @@ up-sand-front:
 	docker compose -f cmd/sand/compose.yml up
 down-sand:
 	docker compose -f cmd/sand/compose.yml down
-.PHONY: ci test coverage up up-front psql down clean sand up-sand up-sand-front down-sand
+run:
+	go run ./klend.go
+.PHONY: ci test coverage up up-front psql down clean sand up-sand up-sand-front down-sand run
