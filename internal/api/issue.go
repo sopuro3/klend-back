@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/sopuro3/klend-back/internal/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -60,9 +61,17 @@ type RequestReturnItem struct {
 		ReturnQuantity int    `json:"returnQuantity"`
 	} `json:"equipments"`
 }
+type IssueUseCase struct {
+	ir repository.IssueRepository
+}
+
+func NewIssueUseCase(ir repository.IssueRepository) *IssueUseCase {
+	return &IssueUseCase{ir}
+}
 
 // GetFormList TODO
-func GetFormList(ctx echo.Context) error {
+func (ir IssueUseCase) GetFormList(ctx echo.Context) error {
+
 	total := 2
 	response := ResponseFormList{
 		Issue: []issue{
@@ -78,20 +87,20 @@ func GetFormList(ctx echo.Context) error {
 // DeleteForm TODO
 // DELETE /issue/:issueId
 // フォームを削除
-func DeleteForm(c echo.Context) error {
+func (ir IssueUseCase) DeleteForm(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success delete"})
 }
 
 // PostCreateNewSurvey TODO
 // POST /issue/survey
 // フォームを作成
-func PostCreateNewSurvey(c echo.Context) error {
+func (ir IssueUseCase) PostCreateNewSurvey(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseCreateNewIssue{"018ce372-f35a-705a-9695-ce8ac9c6eff3"})
 }
 
 // PostReturnItem TODO
 // POST /issue/:issueID/return
 // 資機材の返却
-func PostReturnItem(c echo.Context) error {
+func (ir IssueUseCase) PostReturnItem(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success return item"})
 }
