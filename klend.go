@@ -28,24 +28,20 @@ func main() {
 	localRun := flag.Bool("local", false, "true: klend-back run on local. false: klend-back run on docker compose")
 	flag.Parse()
 
-	var dsn string
+	var host string
 	if os.Getenv("DOCKER_COMPOSE") == "0" || *localRun {
-		dsn = fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Tokyo",
-			os.Getenv("POSTGRES_HOST"),
-			os.Getenv("POSTGRES_USER"),
-			os.Getenv("POSTGRES_PASSWORD"),
-			os.Getenv("POSTGRES_DB"),
-		)
+		host = os.Getenv("POSTGRES_HOST")
 	} else {
-		dsn = fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Tokyo",
-			"db",
-			os.Getenv("POSTGRES_USER"),
-			os.Getenv("POSTGRES_PASSWORD"),
-			os.Getenv("POSTGRES_DB"),
-		)
+		host = "db"
 	}
+
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Tokyo",
+		host,
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DB"),
+	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

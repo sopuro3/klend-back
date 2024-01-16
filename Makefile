@@ -8,11 +8,9 @@ coverage:
 	go test -v -cover ./... -coverprofile=cover.out
 	go tool cover -html=cover.out -o cover.html
 up:
-	docker compose build
-	docker compose up -d
+	docker compose up -d --build
 up-front:
-	docker compose build
-	docker compose up
+	docker compose up --build
 psql:
 	docker compose up -d
 	docker compose exec db /bin/psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
