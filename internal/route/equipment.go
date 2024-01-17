@@ -10,16 +10,9 @@ import (
 	"github.com/sopuro3/klend-back/internal/usecase"
 )
 
-type Equipment struct {
-	EquipmentID     uuid.UUID `json:"equipmentId"`
-	Name            string    `json:"name"`
-	MaxQuantity     int32     `json:"maxQuantity"`
-	CurrentQuantity int32     `json:"currentQuantity"`
-	Note            string    `json:"note"`
-}
 type ResponseEquipmentList struct {
-	Equipments      []Equipment `json:"equipments"`
-	TotalEquipments int         `json:"totalEquipments"`
+	Equipments      []usecase.Equipment `json:"equipments"`
+	TotalEquipments int                 `json:"totalEquipments"`
 }
 
 type RequestNewEquipment struct {
@@ -44,14 +37,14 @@ func NewEquipmentHandler(eu *usecase.EquipmentUseCase) *EquipmentHandler {
 }
 
 //nolint:unused
-func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (Equipment, error) {
+func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (usecase.Equipment, error) {
 	currentQuantity, err := eh.eu.CurrentQuantity(eqModel.ID)
 	if err != nil {
 		//nolint:wrapcheck
-		return Equipment{}, err
+		return usecase.Equipment{}, err
 	}
 
-	return Equipment{
+	return usecase.Equipment{
 		EquipmentID:     eqModel.ID,
 		Name:            eqModel.Name,
 		CurrentQuantity: currentQuantity,
@@ -63,10 +56,14 @@ func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (Equipment,
 // GetEquipmentsList TODO
 // GET /equipment
 func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
+
+	// TODO
+	panic("impl me")
+
 	total := 2
 	response := ResponseEquipmentList{
 		//nolint:gomnd,lll
-		Equipments: []Equipment{
+		Equipments: []usecase.Equipment{
 			{EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
 			{EquipmentID: uuid.MustParse("018c7ba8d2df7adcaf3dbe411ce1cb60"), Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
 		},
@@ -79,6 +76,8 @@ func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
 // PostNewEquipment TODO
 // POST /equipment
 func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error {
+	// TODO
+	panic("impl me")
 	res := ResponseNewEquipment{"018c7b9f8c55708f803527a5528e83ed"}
 
 	return c.JSON(http.StatusOK, res)
@@ -87,8 +86,10 @@ func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error {
 // GetEquipmentByID TODO
 // GET /equipment/[:equipmentId]
 func (eh *EquipmentHandler) GetEquipmentByID(ctx echo.Context) error {
+	// TODO
+	panic("impl me")
 	//nolint:gomnd
-	res := Equipment{
+	res := usecase.Equipment{
 		EquipmentID:     uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"),
 		Name:            "角スコップ",
 		MaxQuantity:     20,
@@ -102,6 +103,8 @@ func (eh *EquipmentHandler) GetEquipmentByID(ctx echo.Context) error {
 // PutEquipmentByID TODO
 // PUT /equipment/[:equipmentId]
 func (eh *EquipmentHandler) PutEquipmentByID(c echo.Context) error {
+	// TODO
+	panic("impl me")
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success update equipment"})
 }
 

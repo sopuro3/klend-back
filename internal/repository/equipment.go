@@ -69,3 +69,4 @@ func (er *equipmentRepository) Delete(equipment *model.Equipment) error {
 
 	return nil
 }
+

@@ -74,3 +74,4 @@ func (ir *issueRepository) Delete(issue *model.Issue) error {
 
 	return nil
 }
+
