@@ -1,4 +1,4 @@
-package api
+package route
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/sopuro3/klend-back/internal/model"
-	"github.com/sopuro3/klend-back/internal/repository"
+	"github.com/sopuro3/klend-back/internal/usecase"
 )
 
 type Equipment struct {
@@ -33,22 +33,21 @@ type ResponseNewEquipment struct {
 	EquipmentID string `json:"id"`
 }
 
-type EquipmentUseCase struct {
-	er repository.EquipmentRepository
-	lr repository.LoanEntryRepository
+type EquipmentHandler struct {
+	eu *usecase.EquipmentUseCase
 }
 
-func NewEquipmentUseCase(er repository.EquipmentRepository, lr repository.LoanEntryRepository) *EquipmentUseCase {
-	return &EquipmentUseCase{
-		er: er,
-		lr: lr,
+func NewEquipmentHandler(eu *usecase.EquipmentUseCase) *EquipmentHandler {
+	return &EquipmentHandler{
+		eu: eu,
 	}
 }
 
 //nolint:unused
-func (eu EquipmentUseCase) modelToResponse(eqModel model.Equipment) (Equipment, error) {
-	currentQuantity, err := eu.CurrentQuantity(eqModel.ID)
+func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (Equipment, error) {
+	currentQuantity, err := eh.eu.CurrentQuantity(eqModel.ID)
 	if err != nil {
+		//nolint:wrapcheck
 		return Equipment{}, err
 	}
 
@@ -61,33 +60,9 @@ func (eu EquipmentUseCase) modelToResponse(eqModel model.Equipment) (Equipment, 
 	}, nil
 }
 
-// TODO: check issue.isConfirmed
-func (eu EquipmentUseCase) CurrentQuantity(equipmentID uuid.UUID) (int32, error) {
-	loanEntries, err := eu.lr.FindByEquipmentID(equipmentID)
-	if err != nil {
-		//nolint:wrapcheck
-		return 0, err
-	}
-
-	var count int32
-	for _, loanEntry := range loanEntries {
-		count += loanEntry.Quantity
-	}
-
-	return count, nil
-}
-
 // GetEquipmentsList TODO
 // GET /equipment
-func (eu EquipmentUseCase) GetEquipmentsList(ctx echo.Context) error {
-	equipments, err := eu.er.FindAll()
-	if err != nil {
-		//nolint:wrapcheck
-		return err
-	}
-
-	_ = equipments
-
+func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
 	total := 2
 	response := ResponseEquipmentList{
 		//nolint:gomnd,lll
@@ -103,7 +78,7 @@ func (eu EquipmentUseCase) GetEquipmentsList(ctx echo.Context) error {
 
 // PostNewEquipment TODO
 // POST /equipment
-func (eu EquipmentUseCase) PostNewEquipment(c echo.Context) error {
+func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error {
 	res := ResponseNewEquipment{"018c7b9f8c55708f803527a5528e83ed"}
 
 	return c.JSON(http.StatusOK, res)
@@ -111,7 +86,7 @@ func (eu EquipmentUseCase) PostNewEquipment(c echo.Context) error {
 
 // GetEquipmentByID TODO
 // GET /equipment/[:equipmentId]
-func (eu EquipmentUseCase) GetEquipmentByID(ctx echo.Context) error {
+func (eh *EquipmentHandler) GetEquipmentByID(ctx echo.Context) error {
 	//nolint:gomnd
 	res := Equipment{
 		EquipmentID:     uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"),
@@ -126,12 +101,12 @@ func (eu EquipmentUseCase) GetEquipmentByID(ctx echo.Context) error {
 
 // PutEquipmentByID TODO
 // PUT /equipment/[:equipmentId]
-func (eu EquipmentUseCase) PutEquipmentByID(c echo.Context) error {
+func (eh *EquipmentHandler) PutEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success update equipment"})
 }
 
 // DeleteEquipmentByID TODO
 // DELETE /equipment/[:equipmentId]
-func (eu EquipmentUseCase) DeleteEquipmentByID(c echo.Context) error {
+func (eh *EquipmentHandler) DeleteEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success delete equipment"})
 }

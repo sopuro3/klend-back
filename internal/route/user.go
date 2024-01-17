@@ -1,9 +1,11 @@
-package api
+package route
 
 import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/sopuro3/klend-back/internal/usecase"
 )
 
 type RequestUser struct {
@@ -22,39 +24,43 @@ type RequestLogout struct {
 	ID string `json:"id"` // email or username
 }
 
-func ValidateRequestUser(data *RequestUser) error {
+type UserHandler struct {
+	uu *usecase.UserUseCase
+}
+
+func NewUserHandler(uu *usecase.UserUseCase) *UserHandler {
+	return &UserHandler{
+		uu: uu,
+	}
+}
+
+func validateRequestUser(data *RequestUser) error {
 	_ = data
 
 	return nil
 }
 
-func PostUserCreate(ctx echo.Context) error {
+func (uh *UserHandler) PostUserCreate(ctx echo.Context) error {
 	data := new(RequestUser)
 	if err := ctx.Bind(&data); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "error bad request"})
 	}
 
-	if err := ValidateRequestUser(data); err != nil {
+	if err := validateRequestUser(data); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "error bad request"})
 	}
 
-	if err := CreateUser(data); err != nil {
+	if err := uh.uu.CreateUser(data.UserID, data.Email, data.UserName, data.Password); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "error bad request"})
 	}
 
 	return ctx.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success crate user"})
 }
 
-func CreateUser(data *RequestUser) error {
-	_ = data
-
-	return nil
-}
-
-func PostUserLogin(c echo.Context) error {
+func (uh *UserHandler) PostUserLogin(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success login"})
 }
 
-func PostUserLogout(c echo.Context) error {
+func (uh *UserHandler) PostUserLogout(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success logout"})
 }
