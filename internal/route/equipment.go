@@ -56,7 +56,6 @@ func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (usecase.Eq
 // GetEquipmentsList TODO
 // GET /equipment
 func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
-
 	// TODO
 	panic("impl me")
 

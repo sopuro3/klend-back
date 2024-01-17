@@ -12,6 +12,7 @@ type LoanEntryRepository interface {
 	Find(id uuid.UUID) (*model.LoanEntry, error)
 	FindByIssueID(issueID uuid.UUID) ([]*model.LoanEntry, error)
 	FindByEquipmentID(equipmentID uuid.UUID) ([]*model.LoanEntry, error)
+	FindAll() ([]*model.LoanEntry, error)
 	Create(equipment *model.LoanEntry) error
 	Update(equipment *model.LoanEntry) error
 }
@@ -54,6 +55,17 @@ func (lr *loanEntryRepository) FindByEquipmentID(equipmentID uuid.UUID) ([]*mode
 	}
 
 	return loanEntries, nil
+}
+
+func (lr *loanEntryRepository) FindAll() ([]*model.LoanEntry, error) {
+	var loanEntrys []*model.LoanEntry
+
+	result := lr.db.Find(&loanEntrys)
+	if result.Error != nil {
+		return loanEntrys, result.Error
+	}
+
+	return loanEntrys, nil
 }
 
 func (lr *loanEntryRepository) Create(loanEntry *model.LoanEntry) error {
