@@ -15,19 +15,17 @@ type Equipment struct {
 }
 
 type EquipmentUseCase struct {
-	er repository.EquipmentRepository
-	lr repository.LoanEntryRepository
+	r repository.BaseRepository
 }
 
-func NewEquipmentUseCase(er repository.EquipmentRepository, lr repository.LoanEntryRepository) *EquipmentUseCase {
+func NewEquipmentUseCase(r repository.BaseRepository) *EquipmentUseCase {
 	return &EquipmentUseCase{
-		er: er,
-		lr: lr,
+		r: r,
 	}
 }
 
 func (eu EquipmentUseCase) CurrentQuantity(equipmentID uuid.UUID) (int32, error) {
-	loanEntries, err := eu.lr.FindByEquipmentID(equipmentID)
+	loanEntries, err := eu.r.GetLoanEntryRepository().FindByEquipmentID(equipmentID)
 	if err != nil {
 		//nolint:wrapcheck
 		return 0, err
