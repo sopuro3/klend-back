@@ -5,9 +5,9 @@ import (
 )
 
 type IssueUseCase struct {
-	ir repository.IssueRepository
+	r repository.BaseRepository
 }
 
-func NewIssueUseCase(ir repository.IssueRepository) *IssueUseCase {
-	return &IssueUseCase{ir}
+func NewIssueUseCase(r repository.BaseRepository) *IssueUseCase {
+	return &IssueUseCase{r}
 }
