@@ -13,9 +13,10 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/sopuro3/klend-back/internal/api"
 	"github.com/sopuro3/klend-back/internal/migrate"
 	"github.com/sopuro3/klend-back/internal/repository"
+	"github.com/sopuro3/klend-back/internal/route"
+	"github.com/sopuro3/klend-back/internal/usecase"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -109,12 +110,19 @@ func loggerInit(e *echo.Echo, logger *slog.Logger) {
 }
 
 func handlerInit(e *echo.Echo, db *gorm.DB) {
+	ur := repository.NewUserRepository(db)
+	ir := repository.NewIssueRepository(db)
 	er := repository.NewEquipmentRepository(db)
 	lr := repository.NewLoanEntryRepository(db)
-	equipmentHandler := api.NewEquipmentUseCase(er, lr)
 
-	ir := repository.NewIssueRepository(db)
-	issueHandler := api.NewIssueUseCase(ir)
+	uu := usecase.NewUserUseCase(ur)
+	iu := usecase.NewIssueUseCase(ir)
+	eu := usecase.NewEquipmentUseCase(er, lr)
+
+	userHandler := route.NewUserHandler(uu)
+	issueHandler := route.NewIssueHandler(iu)
+	equipmentHandler := route.NewEquipmentHandler(eu)
+
 	group := e.Group("/v1")
 	e.GET("/version", func(c echo.Context) error {
 		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
@@ -123,9 +131,9 @@ func handlerInit(e *echo.Echo, db *gorm.DB) {
 		return c.String(http.StatusOK, "0.1.0") //nolint: wrapcheck
 	})
 
-	group.POST("/user", api.PostUserCreate)
-	group.POST("/user/login", api.PostUserLogin)
-	group.POST("/user/logout", api.PostUserLogout)
+	group.POST("/user", userHandler.PostUserCreate)
+	group.POST("/user/login", userHandler.PostUserLogin)
+	group.POST("/user/logout", userHandler.PostUserLogout)
 	group.GET("/issue", issueHandler.GetFormList)
 	group.DELETE("/issue/:issueID", issueHandler.DeleteForm)
 	group.GET("/issue/:issueID", issueHandler.GetFormByID)
