@@ -110,14 +110,11 @@ func loggerInit(e *echo.Echo, logger *slog.Logger) {
 }
 
 func handlerInit(e *echo.Echo, db *gorm.DB) {
-	ur := repository.NewUserRepository(db)
-	ir := repository.NewIssueRepository(db)
-	er := repository.NewEquipmentRepository(db)
-	lr := repository.NewLoanEntryRepository(db)
+	r := repository.NewBaseRepository(db)
 
-	uu := usecase.NewUserUseCase(ur)
-	iu := usecase.NewIssueUseCase(ir)
-	eu := usecase.NewEquipmentUseCase(er, lr)
+	uu := usecase.NewUserUseCase(r)
+	iu := usecase.NewIssueUseCase(r)
+	eu := usecase.NewEquipmentUseCase(r)
 
 	userHandler := route.NewUserHandler(uu)
 	issueHandler := route.NewIssueHandler(iu)

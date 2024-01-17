@@ -3,12 +3,12 @@ package usecase
 import "github.com/sopuro3/klend-back/internal/repository"
 
 type UserUseCase struct {
-	ur repository.UserRepository
+	r repository.BaseRepository
 }
 
-func NewUserUseCase(ur repository.UserRepository) *UserUseCase {
+func NewUserUseCase(r repository.BaseRepository) *UserUseCase {
 	return &UserUseCase{
-		ur: ur,
+		r: r,
 	}
 }
 
