@@ -1,9 +1,11 @@
 package route
 
 import (
+	"errors"
+	"github.com/google/uuid"
+	"log/slog"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
 	"github.com/sopuro3/klend-back/internal/model"
@@ -53,20 +55,18 @@ func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (usecase.Eq
 	}, nil
 }
 
-// GetEquipmentsList TODO
+// GetEquipmentsList
 // GET /equipment
 func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
-	// TODO
-	panic("impl me")
+	equipments, err := eh.eu.LoadEquipmentList()
+	if err != nil {
+		slog.Error("GET /equipment", "error", err)
+		ctx.JSON(http.StatusInternalServerError, ResponseMessage{ERROR, "Internal Server Error"})
+	}
 
-	total := 2
 	response := ResponseEquipmentList{
-		//nolint:gomnd,lll
-		Equipments: []usecase.Equipment{
-			{EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"},
-			{EquipmentID: uuid.MustParse("018c7ba8d2df7adcaf3dbe411ce1cb60"), Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"},
-		},
-		TotalEquipments: total,
+		Equipments:      equipments,
+		TotalEquipments: len(equipments),
 	}
 
 	return ctx.JSON(http.StatusOK, response)
@@ -75,7 +75,6 @@ func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
 // PostNewEquipment TODO
 // POST /equipment
 func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error {
-	// TODO
 	panic("impl me")
 	res := ResponseNewEquipment{"018c7b9f8c55708f803527a5528e83ed"}
 
@@ -85,18 +84,20 @@ func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error {
 // GetEquipmentByID TODO
 // GET /equipment/[:equipmentId]
 func (eh *EquipmentHandler) GetEquipmentByID(ctx echo.Context) error {
-	// TODO
-	panic("impl me")
-	//nolint:gomnd
-	res := usecase.Equipment{
-		EquipmentID:     uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"),
-		Name:            "角スコップ",
-		MaxQuantity:     20,
-		CurrentQuantity: 10,
-		Note:            "てすとてすとてすと",
+	equipmentID, err := uuid.Parse(ctx.Param("equipmentID"))
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "invalid equipmentID"})
 	}
 
-	return ctx.JSON(http.StatusOK, res)
+	equipment, err := eh.eu.LoadEquipmentByID(equipmentID)
+	if err != nil {
+		if errors.Is(err, usecase.ErrRecodeNotFound) {
+			return ctx.JSON(http.StatusNotFound, ResponseMessage{ERROR, "this equipment is not found"})
+		}
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, equipment)
 }
 
 // PutEquipmentByID TODO

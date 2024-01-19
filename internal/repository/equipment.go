@@ -1,4 +1,4 @@
-//nolint:ireturn;nilnil // domainとinfraにわけたときにはinterfaceを返す必要がある
+//nolint:ireturn  // domainとinfraにわけたときにはinterfaceを返す必要がある
 package repository
 
 import (
@@ -32,7 +32,7 @@ func (er *equipmentRepository) Find(id uuid.UUID) (*model.Equipment, error) {
 
 	if err := er.db.Take(&equipment).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
+			return nil, nil //nolint:nilnil
 		}
 
 		return nil, err
