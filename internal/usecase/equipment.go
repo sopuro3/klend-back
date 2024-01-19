@@ -61,6 +61,7 @@ func NewEquipmentUseCase(r repository.BaseRepository) *EquipmentUseCase {
 	}
 }
 
+// TODO isConfirm
 func (eu EquipmentUseCase) CurrentQuantity(equipmentID uuid.UUID) (int32, error) {
 	loanEntries, err := eu.r.GetLoanEntryRepository().FindByEquipmentID(equipmentID)
 	if err != nil {

@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	"github.com/sopuro3/klend-back/internal/model"
 	"github.com/sopuro3/klend-back/internal/usecase"
 )
 
@@ -30,23 +29,6 @@ func NewEquipmentHandler(eu *usecase.EquipmentUseCase) *EquipmentHandler {
 	return &EquipmentHandler{
 		eu: eu,
 	}
-}
-
-//nolint:unused
-func (eh *EquipmentHandler) modelToResponse(eqModel model.Equipment) (usecase.Equipment, error) {
-	currentQuantity, err := eh.eu.CurrentQuantity(eqModel.ID)
-	if err != nil {
-		//nolint:wrapcheck
-		return usecase.Equipment{}, err
-	}
-
-	return usecase.Equipment{
-		EquipmentID:     eqModel.ID,
-		Name:            eqModel.Name,
-		CurrentQuantity: currentQuantity,
-		MaxQuantity:     eqModel.MaxQuantity,
-		Note:            eqModel.Note,
-	}, nil
 }
 
 // GetEquipmentsList
@@ -155,7 +137,7 @@ func (eh *EquipmentHandler) PutEquipmentByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{SUCCESS, "update success"})
 }
 
-// DeleteEquipmentByID TODO
+// DeleteEquipmentByID
 // DELETE /equipment/[:equipmentID]
 func (eh *EquipmentHandler) DeleteEquipmentByID(c echo.Context) error {
 	equipmentID, err := uuid.Parse(c.Param("equipmentID"))
