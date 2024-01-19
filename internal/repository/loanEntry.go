@@ -16,6 +16,7 @@ type LoanEntryRepository interface {
 	FindAll() ([]*model.LoanEntry, error)
 	Create(equipment *model.LoanEntry) error
 	Update(equipment *model.LoanEntry) error
+	Delete(equipment *model.LoanEntry) error
 }
 
 type loanEntryRepository struct {
@@ -94,6 +95,18 @@ func (lr *loanEntryRepository) Create(loanEntry *model.LoanEntry) error {
 
 func (lr *loanEntryRepository) Update(loanEntry *model.LoanEntry) error {
 	if err := lr.db.Save(loanEntry).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (lr *loanEntryRepository) Delete(loanEntry *model.LoanEntry) error {
+	if loanEntry.EquipmentID == (uuid.UUID{}) && loanEntry.IssueID == (uuid.UUID{}) {
+		return ErrIDIsEmpty
+	}
+
+	if err := lr.db.Where(&loanEntry).Delete(&model.LoanEntry{}).Error; err != nil {
 		return err
 	}
 

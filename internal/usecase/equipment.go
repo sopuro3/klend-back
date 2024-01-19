@@ -1,9 +1,13 @@
 package usecase
 
 import (
-	"github.com/google/uuid"
+	"errors"
 	"math"
 	"unicode/utf8"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/google/uuid"
 
 	"github.com/sopuro3/klend-back/internal/model"
 	"github.com/sopuro3/klend-back/internal/repository"
@@ -16,11 +20,36 @@ const (
 
 type Equipment struct {
 	EquipmentID     uuid.UUID `json:"equipmentId"`
-	Name            string    `json:"name"`
-	MaxQuantity     int32     `json:"maxQuantity"`
+	Name            string    `json:"name"`        // utf8で128文字
+	MaxQuantity     int32     `json:"maxQuantity"` // qty > 0
 	CurrentQuantity int32     `json:"currentQuantity"`
-	Note            string    `json:"note"`
+	Note            string    `json:"note"` // utf8で500文字
 }
+
+type RequestNewEquipment struct {
+	Name        string `json:"name"`
+	MaxQuantity int    `json:"maxQuantity"`
+	Note        string `json:"note"`
+}
+
+func (e RequestNewEquipment) Validate() error {
+	return validation.ValidateStruct(&e,
+		validation.Field(&e.Name,
+			validation.Required.Error("name is required"),
+			validation.RuneLength(1, MaxNameLength).Error("name length is 1 ~ 128"),
+		),
+		validation.Field(&e.MaxQuantity,
+			is.Int.Error("current quantity must be int"),
+			validation.Min(0),
+		),
+		validation.Field(&e.Note,
+			validation.RuneLength(0, MaxNoteLength).Error("notes are 500 characters max"),
+			//			validation.Required.Error("note is required"),
+		),
+	)
+}
+
+type RequestUpdateEquipment = RequestNewEquipment
 
 type EquipmentUseCase struct {
 	r repository.BaseRepository
@@ -62,6 +91,7 @@ func (eu EquipmentUseCase) LoadEquipmentByID(equipmentID uuid.UUID) (*Equipment,
 		if err != nil {
 			return err
 		}
+
 		return nil
 	})
 	if err != nil {
@@ -153,4 +183,62 @@ func (eu EquipmentUseCase) CreateNewEquipment(name, note string, maxQuantity int
 	}
 
 	return equipment.ID, nil
+}
+
+func (eu EquipmentUseCase) UpdateEquipment(equipmentID uuid.UUID, name, note string, maxQuantity int) error {
+	if utf8.RuneCountInString(name) > MaxNameLength {
+		return ErrTooLongString //nolint:wrapcheck
+	}
+
+	if utf8.RuneCountInString(note) > MaxNoteLength {
+		return ErrTooLongString //nolint:wrapcheck
+	}
+
+	if maxQuantity < 0 || maxQuantity > math.MaxInt32 {
+		return ErrInvalidQuantity //nolint:wrapcheck
+	}
+
+	equipment := &model.Equipment{
+		Model:       model.Model{ID: equipmentID},
+		Name:        name,
+		MaxQuantity: int32(maxQuantity),
+		Note:        note,
+	}
+
+	if err := eu.r.GetEquipmentRepository().Update(equipment); err != nil {
+		if errors.Is(err, repository.ErrRecodeNotFound) {
+			return ErrRecodeNotFound
+		}
+
+		return err
+	}
+
+	return nil
+}
+
+func (eu EquipmentUseCase) DeleteEquipmentByID(equipmentID uuid.UUID) error {
+	err := eu.r.GetEquipmentRepository().Delete(&model.Equipment{Model: model.Model{ID: equipmentID}})
+	if err != nil {
+		return err
+	}
+
+	err = eu.r.Atomic(func(br repository.BaseRepository) error {
+		loanEntry := &model.LoanEntry{EquipmentID: equipmentID}
+		if err := br.GetLoanEntryRepository().Delete(loanEntry); err != nil {
+			return err
+		}
+
+		equipment := &model.Equipment{Model: model.Model{ID: equipmentID}}
+
+		if err := br.GetEquipmentRepository().Delete(equipment); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
