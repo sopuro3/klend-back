@@ -78,6 +78,7 @@ func (eu EquipmentUseCase) CurrentQuantity(equipmentID uuid.UUID) (int32, error)
 
 func (eu EquipmentUseCase) LoadEquipmentByID(equipmentID uuid.UUID) (*Equipment, error) {
 	var equipment *model.Equipment
+
 	var count int32
 
 	err := eu.r.Atomic(func(br repository.BaseRepository) error {
@@ -103,7 +104,6 @@ func (eu EquipmentUseCase) LoadEquipmentByID(equipmentID uuid.UUID) (*Equipment,
 	}
 
 	uEquipment := &Equipment{
-
 		EquipmentID:     equipment.ID,
 		Name:            equipment.Name,
 		MaxQuantity:     equipment.MaxQuantity,
@@ -118,24 +118,21 @@ func (eu EquipmentUseCase) LoadEquipmentList() ([]Equipment, error) {
 	equipments := make([]*model.Equipment, 0)
 	equipmentsCurrentQty := map[uuid.UUID]int32{}
 	loanEntry := make([]*model.LoanEntry, 0)
-	err := eu.r.Atomic(func(baseRepository repository.BaseRepository) error {
-		er := baseRepository.GetEquipmentRepository()
-		lr := baseRepository.GetLoanEntryRepository()
 
+	err := eu.r.Atomic(func(br repository.BaseRepository) error { //nolint:varnamelen
 		var err error
-		equipments, err = er.FindAll()
+		equipments, err = br.GetEquipmentRepository().FindAll()
 		if err != nil {
 			return err
 		}
 
-		loanEntry, err = lr.FindAll()
+		loanEntry, err = br.GetLoanEntryRepository().FindAll()
 		if err != nil {
 			return err
 		}
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +219,7 @@ func (eu EquipmentUseCase) DeleteEquipmentByID(equipmentID uuid.UUID) error {
 		return err
 	}
 
-	err = eu.r.Atomic(func(br repository.BaseRepository) error {
+	err = eu.r.Atomic(func(br repository.BaseRepository) error { //nolint:varnamelen
 		loanEntry := &model.LoanEntry{EquipmentID: equipmentID}
 		if err := br.GetLoanEntryRepository().Delete(loanEntry); err != nil {
 			return err
@@ -240,5 +237,6 @@ func (eu EquipmentUseCase) DeleteEquipmentByID(equipmentID uuid.UUID) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

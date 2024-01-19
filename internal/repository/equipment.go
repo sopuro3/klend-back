@@ -3,9 +3,9 @@ package repository
 
 import (
 	"errors"
-	"github.com/jackc/pgerrcode"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 
@@ -107,6 +107,7 @@ func (er *equipmentRepository) Delete(equipment *model.Equipment) error {
 	if equipment.ID == (uuid.UUID{}) {
 		return ErrIDIsEmpty
 	}
+
 	if err := er.db.Delete(equipment).Error; err != nil {
 		return err
 	}

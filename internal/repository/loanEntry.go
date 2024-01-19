@@ -3,6 +3,7 @@ package repository
 
 import (
 	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -36,6 +37,7 @@ func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 

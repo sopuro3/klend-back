@@ -55,6 +55,7 @@ func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
 	equipments, err := eh.eu.LoadEquipmentList()
 	if err != nil {
 		slog.Error("GET /equipment", "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ResponseMessage{ERROR, "Internal Server Error"})
 	}
 
@@ -68,7 +69,7 @@ func (eh *EquipmentHandler) GetEquipmentsList(ctx echo.Context) error {
 
 // PostNewEquipment
 // POST /equipment
-func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error { //nolint:varnamelen
+func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error {
 	var equipment usecase.RequestNewEquipment
 	if err := c.Bind(&equipment); err != nil {
 		slog.Info("bind error", "error", err)
@@ -78,8 +79,10 @@ func (eh *EquipmentHandler) PostNewEquipment(c echo.Context) error { //nolint:va
 
 	if err := c.Validate(equipment); err != nil {
 		var errs validation.Errors
+
 		errors.As(err, &errs)
-		for k, err := range errs { //nolint:wsl
+
+		for k, err := range errs {
 			slog.Info("validation error", k, err)
 		}
 
@@ -131,7 +134,9 @@ func (eh *EquipmentHandler) PutEquipmentByID(c echo.Context) error {
 
 	if err := c.Validate(&equipment); err != nil {
 		var errs validation.Errors
+
 		errors.As(err, &errs)
+
 		for k, err := range errs {
 			slog.Info("validation error", k, err)
 		}
@@ -160,6 +165,7 @@ func (eh *EquipmentHandler) DeleteEquipmentByID(c echo.Context) error {
 
 	if err := eh.eu.DeleteEquipmentByID(equipmentID); err != nil {
 		slog.Error("db error", "error", err)
+
 		return c.JSON(http.StatusInternalServerError, ResponseMessage{ERROR, "internal server error"})
 	}
 

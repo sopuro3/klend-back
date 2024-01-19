@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+
 	"github.com/sopuro3/klend-back/internal/repository"
 )
 
