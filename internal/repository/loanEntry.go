@@ -2,6 +2,7 @@
 package repository
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -30,7 +31,10 @@ func NewLoanEntryRepository(db *gorm.DB) LoanEntryRepository {
 func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 	loanEntry := model.LoanEntry{Model: model.Model{ID: id}}
 
-	if err := lr.db.Find(&loanEntry).Error; err != nil {
+	if err := lr.db.Take(&loanEntry).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -40,7 +44,11 @@ func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 func (lr *loanEntryRepository) FindByIssueID(issueID uuid.UUID) ([]*model.LoanEntry, error) {
 	var loanEntries []*model.LoanEntry
 
-	if err := lr.db.Where(&model.LoanEntry{IssueID: issueID}).Find(&loanEntries).Error; err != nil {
+	if err := lr.db.Where(&model.LoanEntry{IssueID: issueID}).Take(&loanEntries).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -50,7 +58,11 @@ func (lr *loanEntryRepository) FindByIssueID(issueID uuid.UUID) ([]*model.LoanEn
 func (lr *loanEntryRepository) FindByEquipmentID(equipmentID uuid.UUID) ([]*model.LoanEntry, error) {
 	var loanEntries []*model.LoanEntry
 
-	if err := lr.db.Where(&model.LoanEntry{EquipmentID: equipmentID}).Find(&loanEntries).Error; err != nil {
+	if err := lr.db.Where(&model.LoanEntry{EquipmentID: equipmentID}).Take(&loanEntries).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -62,7 +74,11 @@ func (lr *loanEntryRepository) FindAll() ([]*model.LoanEntry, error) {
 
 	result := lr.db.Find(&loanEntrys)
 	if result.Error != nil {
-		return loanEntrys, result.Error
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, nil
 	}
 
 	return loanEntrys, nil
