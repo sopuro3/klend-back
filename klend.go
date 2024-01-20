@@ -27,6 +27,7 @@ func main() {
 
 	// klend-backをdocker compose 以外で動かすための設定
 	localRun := flag.Bool("local", false, "true: klend-back run on local. false: klend-back run on docker compose")
+	sqlDebug := flag.Bool("sqldebug", false, "debug mode: display SQL query")
 	flag.Parse()
 
 	var host string
@@ -62,9 +63,15 @@ func main() {
 	e := echo.New()
 
 	loggerInit(e, logger)
+	route.ValidatorInit(e)
 	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
-	handlerInit(e, db)
+
+	if *sqlDebug {
+		handlerInit(e, db.Debug())
+	} else {
+		handlerInit(e, db)
+	}
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
