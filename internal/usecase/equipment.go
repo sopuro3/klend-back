@@ -114,7 +114,7 @@ func (eu EquipmentUseCase) LoadEquipmentList() ([]Equipment, error) {
 		equipmentsCurrentQty[v.EquipmentID] += v.Quantity
 	}
 
-	equipmentList := make([]Equipment, 0)
+	equipmentList := make([]Equipment, 0, len(equipments))
 
 	//nolint:varnamelen
 	for _, v := range equipments {
