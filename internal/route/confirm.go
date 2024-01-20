@@ -11,7 +11,7 @@ import (
 
 type PlannedEquipment struct {
 	usecase.Equipment
-	PlannedQuantity int `json:"planedQuantity"`
+	PlannedQuantity int `json:"plannedQuantity"`
 }
 
 // ResponseFormData
