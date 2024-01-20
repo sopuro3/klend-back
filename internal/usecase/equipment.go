@@ -6,7 +6,6 @@ import (
 	"unicode/utf8"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
 
 	"github.com/sopuro3/klend-back/internal/model"
@@ -39,7 +38,6 @@ func (e RequestNewEquipment) Validate() error {
 			validation.RuneLength(1, MaxNameLength).Error("name length is 1 ~ 128"),
 		),
 		validation.Field(&e.MaxQuantity,
-			is.Int.Error("current quantity must be int"),
 			validation.Min(0),
 		),
 		validation.Field(&e.Note,
