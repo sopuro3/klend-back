@@ -3,7 +3,10 @@ package repository
 
 import (
 	"errors"
+
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 
 	"github.com/sopuro3/klend-back/internal/model"
@@ -58,6 +61,13 @@ func (er *equipmentRepository) FindAll() ([]*model.Equipment, error) {
 
 func (er *equipmentRepository) Create(equipment *model.Equipment) error {
 	if err := er.db.Create(equipment).Error; err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == pgerrcode.UniqueViolation {
+				return ErrConflict
+			}
+		}
+
 		return err
 	}
 
@@ -65,7 +75,28 @@ func (er *equipmentRepository) Create(equipment *model.Equipment) error {
 }
 
 func (er *equipmentRepository) Update(equipment *model.Equipment) error {
-	if err := er.db.Save(equipment).Error; err != nil {
+	// global updateを防ぐ
+	if equipment.ID == (uuid.UUID{}) {
+		return ErrIDIsEmpty
+	}
+
+	// 存在しない場合にInsertされるのを防ぐ
+	err := er.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Take(&model.Equipment{Model: model.Model{ID: equipment.ID}}).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Save(equipment).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrRecodeNotFound
+		}
+
 		return err
 	}
 
@@ -73,6 +104,10 @@ func (er *equipmentRepository) Update(equipment *model.Equipment) error {
 }
 
 func (er *equipmentRepository) Delete(equipment *model.Equipment) error {
+	if equipment.ID == (uuid.UUID{}) {
+		return ErrIDIsEmpty
+	}
+
 	if err := er.db.Delete(equipment).Error; err != nil {
 		return err
 	}

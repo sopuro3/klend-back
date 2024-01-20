@@ -3,6 +3,7 @@ package repository
 
 import (
 	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -16,6 +17,7 @@ type LoanEntryRepository interface {
 	FindAll() ([]*model.LoanEntry, error)
 	Create(equipment *model.LoanEntry) error
 	Update(equipment *model.LoanEntry) error
+	Delete(equipment *model.LoanEntry) error
 }
 
 type loanEntryRepository struct {
@@ -35,6 +37,7 @@ func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
@@ -94,6 +97,18 @@ func (lr *loanEntryRepository) Create(loanEntry *model.LoanEntry) error {
 
 func (lr *loanEntryRepository) Update(loanEntry *model.LoanEntry) error {
 	if err := lr.db.Save(loanEntry).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (lr *loanEntryRepository) Delete(loanEntry *model.LoanEntry) error {
+	if loanEntry.EquipmentID == (uuid.UUID{}) && loanEntry.IssueID == (uuid.UUID{}) {
+		return ErrIDIsEmpty
+	}
+
+	if err := lr.db.Where(&loanEntry).Delete(&model.LoanEntry{}).Error; err != nil {
 		return err
 	}
 
