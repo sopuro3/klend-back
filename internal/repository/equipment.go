@@ -1,7 +1,8 @@
-//nolint:ireturn // domainとinfraにわけたときにはinterfaceを返す必要がある
+//nolint:ireturn  // domainとinfraにわけたときにはinterfaceを返す必要がある
 package repository
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -29,7 +30,11 @@ func NewEquipmentRepository(db *gorm.DB) EquipmentRepository {
 func (er *equipmentRepository) Find(id uuid.UUID) (*model.Equipment, error) {
 	equipment := model.Equipment{Model: model.Model{ID: id}}
 
-	if err := er.db.Find(&equipment).Error; err != nil {
+	if err := er.db.Take(&equipment).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil //nolint:nilnil
+		}
+
 		return nil, err
 	}
 
@@ -39,8 +44,13 @@ func (er *equipmentRepository) Find(id uuid.UUID) (*model.Equipment, error) {
 func (er *equipmentRepository) FindAll() ([]*model.Equipment, error) {
 	var equipments []*model.Equipment
 
-	if err := er.db.Find(&equipments).Error; err != nil {
-		return nil, err
+	result := er.db.Find(&equipments)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, nil
 	}
 
 	return equipments, nil
