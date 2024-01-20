@@ -149,4 +149,5 @@ func handlerInit(e *echo.Echo, db *gorm.DB) {
 	group.POST("/equipment", equipmentHandler.PostNewEquipment)
 	group.GET("/equipment/:equipmentID", equipmentHandler.GetEquipmentByID)
 	group.PUT("/equipment/:equipmentID", equipmentHandler.PutEquipmentByID)
+	group.DELETE("/equipment/:equipmentID", equipmentHandler.DeleteEquipmentByID)
 }

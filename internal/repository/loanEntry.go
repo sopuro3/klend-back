@@ -2,6 +2,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
@@ -12,8 +14,10 @@ type LoanEntryRepository interface {
 	Find(id uuid.UUID) (*model.LoanEntry, error)
 	FindByIssueID(issueID uuid.UUID) ([]*model.LoanEntry, error)
 	FindByEquipmentID(equipmentID uuid.UUID) ([]*model.LoanEntry, error)
+	FindAll() ([]*model.LoanEntry, error)
 	Create(equipment *model.LoanEntry) error
 	Update(equipment *model.LoanEntry) error
+	Delete(equipment *model.LoanEntry) error
 }
 
 type loanEntryRepository struct {
@@ -29,7 +33,11 @@ func NewLoanEntryRepository(db *gorm.DB) LoanEntryRepository {
 func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 	loanEntry := model.LoanEntry{Model: model.Model{ID: id}}
 
-	if err := lr.db.Find(&loanEntry).Error; err != nil {
+	if err := lr.db.Take(&loanEntry).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -39,7 +47,11 @@ func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 func (lr *loanEntryRepository) FindByIssueID(issueID uuid.UUID) ([]*model.LoanEntry, error) {
 	var loanEntries []*model.LoanEntry
 
-	if err := lr.db.Where(&model.LoanEntry{IssueID: issueID}).Find(&loanEntries).Error; err != nil {
+	if err := lr.db.Where(&model.LoanEntry{IssueID: issueID}).Take(&loanEntries).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -49,11 +61,30 @@ func (lr *loanEntryRepository) FindByIssueID(issueID uuid.UUID) ([]*model.LoanEn
 func (lr *loanEntryRepository) FindByEquipmentID(equipmentID uuid.UUID) ([]*model.LoanEntry, error) {
 	var loanEntries []*model.LoanEntry
 
-	if err := lr.db.Where(&model.LoanEntry{EquipmentID: equipmentID}).Find(&loanEntries).Error; err != nil {
+	if err := lr.db.Where(&model.LoanEntry{EquipmentID: equipmentID}).Take(&loanEntries).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
 	return loanEntries, nil
+}
+
+func (lr *loanEntryRepository) FindAll() ([]*model.LoanEntry, error) {
+	var loanEntrys []*model.LoanEntry
+
+	result := lr.db.Find(&loanEntrys)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, nil
+	}
+
+	return loanEntrys, nil
 }
 
 func (lr *loanEntryRepository) Create(loanEntry *model.LoanEntry) error {
@@ -66,6 +97,18 @@ func (lr *loanEntryRepository) Create(loanEntry *model.LoanEntry) error {
 
 func (lr *loanEntryRepository) Update(loanEntry *model.LoanEntry) error {
 	if err := lr.db.Save(loanEntry).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (lr *loanEntryRepository) Delete(loanEntry *model.LoanEntry) error {
+	if loanEntry.EquipmentID == (uuid.UUID{}) && loanEntry.IssueID == (uuid.UUID{}) {
+		return ErrIDIsEmpty
+	}
+
+	if err := lr.db.Where(&loanEntry).Delete(&model.LoanEntry{}).Error; err != nil {
 		return err
 	}
 
