@@ -176,7 +176,7 @@ func (eu EquipmentUseCase) CreateNewEquipment(name, note string, maxQuantity int
 	equipment := model.NewEquipment(name, int32(maxQuantity), note)
 
 	er := eu.r.GetEquipmentRepository()
-	if err := er.Create(equipment); err != nil {
+	if err := er.Create([]*model.Equipment{equipment}); err != nil {
 		return uuid.UUID{}, err
 	}
 

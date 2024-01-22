@@ -1,6 +1,7 @@
 package route
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -14,30 +15,36 @@ type PlannedEquipment struct {
 	PlannedQuantity int `json:"plannedQuantity"`
 }
 
-// ResponseFormData
+// ResponseIssueData
 // Issueの取得、更新はこの方を利用して行う
-type ResponseFormData struct {
-	Issue           issue              `json:"issue"`
+type ResponseIssueData struct {
+	Issue           usecase.Issue      `json:"issue"`
 	Equipments      []PlannedEquipment `json:"equipments"`
 	TotalEquipments int                `json:"totalEquipments"`
 }
 
-// GetFormByID TODO
-// GET /form/[:formId]
+// GetIssueByID TODO
+// GET /issue/[:issueID]
 // フォームのデータを取得
-func (ih *IssueHandler) GetFormByID(ctx echo.Context) error {
-	//nolint:gomnd,lll
-	res := ResponseFormData{
-		Issue: issue{"小森野1-1-1", "久留米太郎", "018c7765-ffd5-724f-aa7f-227175f54d3f", "0001", StatusSurvey, "テストデータ"},
-		//nolint
-		Equipments: []PlannedEquipment{
-			{usecase.Equipment{EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Name: "角スコップ", MaxQuantity: 20, CurrentQuantity: 10, Note: "てすとてすとてすと"}, 5},
-			{usecase.Equipment{EquipmentID: uuid.MustParse("018c7ba8d2df7adcaf3dbe411ce1cb60"), Name: "バケツ", MaxQuantity: 99, CurrentQuantity: 20, Note: "てすとてすとてすと"}, 10},
-		},
-		TotalEquipments: 2,
+func (ih *IssueHandler) GetIssueByID(ctx echo.Context) error {
+	issueID, err := uuid.Parse(ctx.Param("issueID"))
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "invalid issueID"})
 	}
 
-	return ctx.JSON(http.StatusOK, res)
+	issue, err := ih.iu.GetIssue(issueID)
+	if err != nil {
+		if errors.Is(err, usecase.ErrRecodeNotFound) {
+			return ctx.JSON(http.StatusNotFound, ResponseMessage{ERROR, "this issue is not found"})
+		}
+
+		return err
+	}
+
+	var response ResponseIssueData
+	response.Issue = issue
+
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // PatchIssueByID TODO

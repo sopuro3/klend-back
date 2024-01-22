@@ -15,7 +15,7 @@ import (
 type EquipmentRepository interface {
 	Find(id uuid.UUID) (*model.Equipment, error)
 	FindAll() ([]*model.Equipment, error)
-	Create(equipment *model.Equipment) error
+	Create(equipment []*model.Equipment) error
 	Update(equipment *model.Equipment) error
 	Delete(equipment *model.Equipment) error
 }
@@ -59,7 +59,7 @@ func (er *equipmentRepository) FindAll() ([]*model.Equipment, error) {
 	return equipments, nil
 }
 
-func (er *equipmentRepository) Create(equipment *model.Equipment) error {
+func (er *equipmentRepository) Create(equipment []*model.Equipment) error {
 	if err := er.db.Create(equipment).Error; err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
