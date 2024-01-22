@@ -90,16 +90,16 @@ func echoInit(e *echo.Echo, db *gorm.DB, logger *slog.Logger) {
 			   https://klend-front.pages
 			   https://klend.yuigishi.dev
 			*/
-			pattern := `^https:\/\/(?:[a-zA-Z0-9-]+\.)?klend-front\.pages\.dev\/$|^https:\/\/klend\.yuigishi\.dev\/$`
+			pattern := `^https:\/\/(?:[a-zA-Z0-9-]+\.)?klend-front\.pages\.dev$|^https:\/\/klend\.yuigishi\.dev$`
 
 			return regexp.MatchString(pattern, origin)
 		}
 	}
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:    allowOrigin,
-		AllowOriginFunc: allowOriginFunc,
-      AllowCredentials: true,
+		AllowOrigins:     allowOrigin,
+		AllowOriginFunc:  allowOriginFunc,
+		AllowCredentials: true,
 	}))
 	e.Use(middleware.Recover())
 
