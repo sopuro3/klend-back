@@ -6,6 +6,7 @@ import "gorm.io/gorm"
 type BaseRepository interface {
 	Atomic(fn func(BaseRepository) error) error
 	GetUserRepository() UserRepository
+	GetDisplayIDRepository() DisplayIDRepository
 	GetIssueRepository() IssueRepository
 	GetLoanEntryRepository() LoanEntryRepository
 	GetEquipmentRepository() EquipmentRepository
@@ -30,6 +31,10 @@ func (r *baseRepository) Atomic(fn func(BaseRepository) error) error {
 
 func (r *baseRepository) GetUserRepository() UserRepository {
 	return NewUserRepository(r.db)
+}
+
+func (r *baseRepository) GetDisplayIDRepository() DisplayIDRepository {
+	return NewDisplayIDRepository(r.db)
 }
 
 func (r *baseRepository) GetIssueRepository() IssueRepository {
