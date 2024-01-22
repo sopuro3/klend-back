@@ -7,6 +7,8 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -21,17 +23,22 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
+var (
+	flagLocalRun bool //nolint:gochecknoglobals
+	flagSQLDebug bool //nolint:gochecknoglobals
+)
+
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
 	// klend-backをdocker compose 以外で動かすための設定
-	localRun := flag.Bool("local", false, "true: klend-back run on local. false: klend-back run on docker compose")
-	sqlDebug := flag.Bool("sqldebug", false, "debug mode: display SQL query")
+	flag.BoolVar(&flagLocalRun, "local", false, "true: klend-back run on local. false: klend-back run on docker compose")
+	flag.BoolVar(&flagSQLDebug, "sqldebug", false, "debug mode: display SQL query")
 	flag.Parse()
 
 	var host string
-	if os.Getenv("DOCKER_COMPOSE") == "0" || *localRun {
+	if os.Getenv("DOCKER_COMPOSE") == "0" || flagLocalRun {
 		host = os.Getenv("POSTGRES_HOST")
 	} else {
 		host = "db"
@@ -61,19 +68,45 @@ func main() {
 	}
 
 	e := echo.New()
+	echoInit(e, db, logger)
+	e.Logger.Fatal(e.Start(":8080"))
+}
 
+func echoInit(e *echo.Echo, db *gorm.DB, logger *slog.Logger) {
 	loggerInit(e, logger)
 	route.ValidatorInit(e)
-	e.Use(middleware.CORS())
+
+	allowOrigins := os.Getenv("CLIENT_ORIGIN") // ,区切りで設定する
+	allowOrigin := strings.Split(allowOrigins, ",")
+	slog.Info("Client Origin", "origin", allowOrigin)
+
+	var allowOriginFunc func(origin string) (bool, error)
+	// STAGINGが設定されている場合、*.klend-front.pagesとklend.yuigishi.devからのリクエストを受け付ける
+	if staging, ok := os.LookupEnv("STAGING"); ok && staging != "0" {
+		allowOriginFunc = func(origin string) (bool, error) {
+			/*
+			   以下のURIを許可
+			   https://*.klend-front.pages
+			   https://klend-front.pages
+			   https://klend.yuigishi.dev
+			*/
+			pattern := `^https:\/\/(?:[a-zA-Z0-9-]+\.)?klend-front\.pages\.dev\/$|^https:\/\/klend\.yuigishi\.dev\/$`
+
+			return regexp.MatchString(pattern, origin)
+		}
+	}
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:    allowOrigin,
+		AllowOriginFunc: allowOriginFunc,
+	}))
 	e.Use(middleware.Recover())
 
-	if *sqlDebug {
+	if flagSQLDebug {
 		handlerInit(e, db.Debug())
 	} else {
 		handlerInit(e, db)
 	}
-
-	e.Logger.Fatal(e.Start(":8080"))
 }
 
 func loggerInit(e *echo.Echo, logger *slog.Logger) {
