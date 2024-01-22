@@ -99,6 +99,7 @@ func echoInit(e *echo.Echo, db *gorm.DB, logger *slog.Logger) {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:    allowOrigin,
 		AllowOriginFunc: allowOriginFunc,
+      AllowCredentials: true,
 	}))
 	e.Use(middleware.Recover())
 
