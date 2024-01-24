@@ -38,10 +38,11 @@ type RequestReturnItem struct {
 
 type IssueHandler struct {
 	iu *usecase.IssueUseCase
+	cu *usecase.ConfirmUsecase
 }
 
-func NewIssueHandler(iu *usecase.IssueUseCase) *IssueHandler {
-	return &IssueHandler{iu}
+func NewIssueHandler(iu *usecase.IssueUseCase, cu *usecase.ConfirmUsecase) *IssueHandler {
+	return &IssueHandler{iu, cu}
 }
 
 // GetIssueList TODO

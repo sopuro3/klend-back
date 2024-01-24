@@ -122,9 +122,10 @@ func handlerInit(e *echo.Echo, db *gorm.DB) {
 	uu := usecase.NewUserUseCase(r)
 	iu := usecase.NewIssueUseCase(r)
 	eu := usecase.NewEquipmentUseCase(r)
+	cu := usecase.NewConfirmUseCase(r)
 
 	userHandler := route.NewUserHandler(uu)
-	issueHandler := route.NewIssueHandler(iu)
+	issueHandler := route.NewIssueHandler(iu, cu)
 	equipmentHandler := route.NewEquipmentHandler(eu)
 
 	group := e.Group("/v1")

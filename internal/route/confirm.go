@@ -10,17 +10,12 @@ import (
 	"github.com/sopuro3/klend-back/internal/usecase"
 )
 
-type PlannedEquipment struct {
-	usecase.Equipment
-	PlannedQuantity int `json:"plannedQuantity"`
-}
-
 // ResponseIssueData
 // Issueの取得、更新はこの方を利用して行う
 type ResponseIssueData struct {
-	Issue           usecase.Issue      `json:"issue"`
-	Equipments      []PlannedEquipment `json:"equipments"`
-	TotalEquipments int                `json:"totalEquipments"`
+	Issue           usecase.Issue              `json:"issue"`
+	Equipments      []usecase.PlannedEquipment `json:"equipments"`
+	TotalEquipments int                        `json:"totalEquipments"`
 }
 
 // GetIssueByID TODO
@@ -41,8 +36,16 @@ func (ih *IssueHandler) GetIssueByID(ctx echo.Context) error {
 		return err
 	}
 
-	var response ResponseIssueData
-	response.Issue = issue
+	equipments, err := ih.cu.GetPlannedEquipmentList(issueID)
+	if err != nil {
+		return err
+	}
+
+	response := ResponseIssueData{
+		Issue:           issue,
+		Equipments:      equipments,
+		TotalEquipments: len(equipments),
+	}
 
 	return ctx.JSON(http.StatusOK, response)
 }
