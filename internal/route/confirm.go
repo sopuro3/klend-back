@@ -78,6 +78,15 @@ func (ih *IssueHandler) PatchIssueByID(ctx echo.Context) error {
 // PutConfirmIssueByID TODO:
 // PUT /issue/:issueID
 // フォームを確定する
-func (ih *IssueHandler) PutConfirmIssueByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success confirm issue"})
+func (ih *IssueHandler) PutConfirmIssueByID(ctx echo.Context) error {
+	issueID, err := uuid.Parse(ctx.Param("issueID"))
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "invalid issueID"})
+	}
+
+	if err := ih.cu.ConfirmIssue(issueID); err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success confirm issue"})
 }

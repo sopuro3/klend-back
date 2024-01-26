@@ -75,3 +75,35 @@ func (cu *ConfirmUsecase) GetPlannedEquipmentList(issueID uuid.UUID) ([]PlannedE
 
 	return plannedEquipmentList, nil
 }
+
+func (cu *ConfirmUsecase) ConfirmIssue(issueID uuid.UUID) error {
+	err := cu.r.Atomic(func(br repository.BaseRepository) error {
+		ir := br.GetIssueRepository() //nolint:varnamelen
+
+		var err error
+
+		issue, err := ir.Find(issueID)
+		if err != nil {
+			return ErrRecodeNotFound
+		}
+
+		if issue.Status != string(model.StatusEquipmentCheck) {
+			return ErrInvalidStatus
+		}
+
+		err = ir.Update(&model.Issue{
+			Model:  model.Model{ID: issueID},
+			Status: string(model.StatusConfirm),
+		})
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"fmt"
-	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -93,8 +92,8 @@ func (iu *IssueUseCase) CreateIssue(
 
 	modelIssue := model.NewIssue(address, name, string(model.StatusSurvey), note, loanEntries)
 
-	err := iu.r.Atomic(func(br repository.BaseRepository) error {
-		ir := br.GetIssueRepository() //nolint:varnamelen
+	err := iu.r.Atomic(func(br repository.BaseRepository) error { //nolint:varnamelen
+		ir := br.GetIssueRepository()
 		if err := ir.Create(modelIssue); err != nil {
 			return err
 		}
@@ -149,12 +148,10 @@ func (iu *IssueUseCase) UpdateIssue(issueID uuid.UUID, address, name, note *stri
 		return ErrRecodeNotFound
 	}
 
-	slog.Info("issue 2", "oldLoanEntries", oldLoanEntries)
-
 	loanEntries := make([]*model.LoanEntry, 0, len(oldLoanEntries))
 
-	for _, v := range equipments {
-		eqID, err := uuid.Parse(v.EquipmentID)
+	for _, equipment := range equipments {
+		eqID, err := uuid.Parse(equipment.EquipmentID)
 		if err != nil {
 			// TODO 不正なIDの考慮
 			continue
@@ -167,12 +164,11 @@ func (iu *IssueUseCase) UpdateIssue(issueID uuid.UUID, address, name, note *stri
 			continue
 		}
 
-		loanEntry.Quantity = int32(v.Quantity)
+		loanEntry.Quantity = int32(equipment.Quantity)
 		loanEntries = append(loanEntries, loanEntry)
 	}
-	slog.Info("issue 5", "loanEntries", loanEntries)
 
-	err = iu.r.Atomic(func(br repository.BaseRepository) error {
+	err = iu.r.Atomic(func(br repository.BaseRepository) error { //nolint:varnamelen
 		err := br.GetIssueRepository().Update(&issue)
 		if err != nil {
 			return err
