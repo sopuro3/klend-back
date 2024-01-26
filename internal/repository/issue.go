@@ -57,7 +57,7 @@ func (ir *issueRepository) Create(issue *model.Issue) error {
 }
 
 func (ir *issueRepository) Update(issue *model.Issue) error {
-	if err := ir.db.Save(issue).Error; err != nil {
+	if err := ir.db.Updates(issue).Error; err != nil {
 		return err
 	}
 

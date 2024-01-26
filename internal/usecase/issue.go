@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	lop "github.com/samber/lo/parallel"
 
 	"github.com/sopuro3/klend-back/internal/model"
@@ -24,9 +26,9 @@ type Issue struct {
 	Note      string            `json:"note"` // 256文字
 }
 
-type EquipmentWithQuantity struct {
+type EquipmentWithPlannedQuantity struct {
 	EquipmentID string `json:"equipmentId"`
-	Quantity    int    `json:"quantity"`
+	Quantity    int    `json:"plannedQuantity"`
 }
 
 type IssueUseCase struct {
@@ -76,14 +78,14 @@ func (iu *IssueUseCase) GetIssue(id uuid.UUID) (Issue, error) {
 	return issue, nil
 }
 
-func equipmentWithQuantityToModelLoanEntry(src EquipmentWithQuantity) model.LoanEntry {
+func equipmentWithQuantityToModelLoanEntry(src EquipmentWithPlannedQuantity) model.LoanEntry {
 	return *model.NewLoanEntry(int32(src.Quantity), uuid.MustParse(src.EquipmentID), uuid.UUID{})
 }
 
-func (iu *IssueUseCase) CreateIssue(address, name, note string, equipments []EquipmentWithQuantity) (uuid.UUID, error) {
-	ir := iu.r.GetIssueRepository() //nolint:varnamelen
-
-	loanEntries := lop.Map(equipments, func(data EquipmentWithQuantity, _ int) *model.LoanEntry {
+func (iu *IssueUseCase) CreateIssue(
+	address, name, note string, equipments []EquipmentWithPlannedQuantity,
+) (uuid.UUID, error) {
+	loanEntries := lop.Map(equipments, func(data EquipmentWithPlannedQuantity, _ int) *model.LoanEntry {
 		loanEntry := equipmentWithQuantityToModelLoanEntry(data)
 
 		return &loanEntry
@@ -92,6 +94,7 @@ func (iu *IssueUseCase) CreateIssue(address, name, note string, equipments []Equ
 	modelIssue := model.NewIssue(address, name, string(model.StatusSurvey), note, loanEntries)
 
 	err := iu.r.Atomic(func(br repository.BaseRepository) error {
+		ir := br.GetIssueRepository() //nolint:varnamelen
 		if err := ir.Create(modelIssue); err != nil {
 			return err
 		}
@@ -110,4 +113,84 @@ func (iu *IssueUseCase) CreateIssue(address, name, note string, equipments []Equ
 	}
 
 	return modelIssue.ID, nil
+}
+
+func (iu *IssueUseCase) UpdateIssue(issueID uuid.UUID, address, name, note *string, equipments []EquipmentWithPlannedQuantity) error {
+	var err error
+
+	oldIssue, err := iu.r.GetIssueRepository().Find(issueID)
+	if err != nil {
+		return ErrRecodeNotFound
+	}
+
+	if oldIssue.Status != string(model.StatusSurvey) && oldIssue.Status != string(model.StatusEquipmentCheck) {
+		return ErrInvalidStatus
+	}
+
+	issue := model.Issue{
+		Model:  model.Model{ID: oldIssue.ID},
+		Status: string(model.StatusEquipmentCheck),
+	}
+
+	if address != nil {
+		issue.Address = *address
+	}
+
+	if name != nil {
+		issue.Name = *name
+	}
+
+	if note != nil {
+		issue.Note = *note
+	}
+
+	oldLoanEntries, err := iu.r.GetLoanEntryRepository().FindByIssueID(issueID)
+	if err != nil {
+		return ErrRecodeNotFound
+	}
+
+	slog.Info("issue 2", "oldLoanEntries", oldLoanEntries)
+
+	loanEntries := make([]*model.LoanEntry, 0, len(oldLoanEntries))
+
+	for _, v := range equipments {
+		eqID, err := uuid.Parse(v.EquipmentID)
+		if err != nil {
+			// TODO 不正なIDの考慮
+			continue
+		}
+
+		loanEntry, ok := lo.Find(oldLoanEntries, func(item *model.LoanEntry) bool {
+			return item.EquipmentID == eqID
+		})
+		if !ok {
+			continue
+		}
+
+		loanEntry.Quantity = int32(v.Quantity)
+		loanEntries = append(loanEntries, loanEntry)
+	}
+	slog.Info("issue 5", "loanEntries", loanEntries)
+
+	err = iu.r.Atomic(func(br repository.BaseRepository) error {
+		err := br.GetIssueRepository().Update(&issue)
+		if err != nil {
+			return err
+		}
+
+		lr := br.GetLoanEntryRepository()
+		for _, v := range loanEntries {
+			err := lr.Update(v)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

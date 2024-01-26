@@ -9,6 +9,7 @@ import (
 var (
 	ErrTooLongString   = errors.New("too long string")
 	ErrInvalidQuantity = errors.New("invalid quantity")
+	ErrInvalidStatus   = errors.New("invalid status")
 	ErrRecodeNotFound  = errors.New("recode not found")
 	ErrConflict        = repository.ErrConflict
 	ErrIDIsEmpty       = repository.ErrIDIsEmpty

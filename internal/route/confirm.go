@@ -2,6 +2,7 @@ package route
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -53,11 +54,28 @@ func (ih *IssueHandler) GetIssueByID(ctx echo.Context) error {
 // PatchIssueByID TODO
 // PATCH /issue/:issueID
 // フォームを修正
-func (ih *IssueHandler) PatchIssueByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "success update planned quantity"})
+func (ih *IssueHandler) PatchIssueByID(ctx echo.Context) error {
+	issueID, err := uuid.Parse(ctx.Param("issueID"))
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, ResponseMessage{Status: ERROR, Message: "invalid issueID"})
+	}
+
+	req := new(RequestPatchIssue)
+	if err := ctx.Bind(&req); err != nil {
+		return err
+	}
+
+	slog.Info("req", "reqjson", req)
+
+	err = ih.iu.UpdateIssue(issueID, req.Issue.Address, req.Issue.Name, req.Issue.Note, req.Equipments)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, ResponseMessage{Status: SUCCESS, Message: "edit issue patch succeeded"})
 }
 
-// PutConfirmIssueByID TODO
+// PutConfirmIssueByID TODO:
 // PUT /issue/:issueID
 // フォームを確定する
 func (ih *IssueHandler) PutConfirmIssueByID(c echo.Context) error {

@@ -17,14 +17,24 @@ type RequestDeleteForm struct {
 	IssueID usecase.IssueID `json:"issueId"`
 }
 
-type RequestCreateNewIssue struct {
+type RequestCreateIssue struct {
 	Issue struct {
 		Address string `json:"address"` // 128文字
 		Name    string `json:"name"`    // 128文字
 		Note    string `json:"note"`    // 256文字
 	} `json:"issue"`
-	Equipments []usecase.EquipmentWithQuantity `json:"equipments"`
+	Equipments []usecase.EquipmentWithPlannedQuantity `json:"equipments"`
 }
+
+type RequestPatchIssue struct {
+	Issue struct {
+		Address *string `json:"address"` // 128文字
+		Name    *string `json:"name"`    // 128文字
+		Note    *string `json:"note"`    // 256文字
+	} `json:"issue"`
+	Equipments []usecase.EquipmentWithPlannedQuantity `json:"equipments"`
+}
+
 type ResponseCreateNewIssue struct {
 	IssueID string `json:"issueId"`
 }
@@ -71,7 +81,7 @@ func (ih *IssueHandler) DeleteForm(c echo.Context) error {
 // POST /issue/survey
 // フォームを作成
 func (ih *IssueHandler) PostCreateNewIssue(ctx echo.Context) error {
-	req := new(RequestCreateNewIssue)
+	req := new(RequestCreateIssue)
 	if err := ctx.Bind(&req); err != nil {
 		return err
 	}
