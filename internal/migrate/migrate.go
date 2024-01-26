@@ -17,6 +17,10 @@ func AutoMigrate(db *gorm.DB) error {
 		return err
 	}
 
+	if err := db.AutoMigrate(&model.DisplayID{}); err != nil {
+		return err
+	}
+
 	if err := db.AutoMigrate(&model.Issue{}); err != nil {
 		return err
 	}
@@ -55,9 +59,14 @@ func Seed(db *gorm.DB) {
 		// {Model: model.Model{ID: uuid.MustParse("018cfd8b-ee64-71c2-929c-e8d1cca5c2f0")}, EquipmentID: uuid.MustParse("018c7b9f8c55708f803527a5528e83ed"), Quantity: 5},
 	}
 
+	displayIDs := []*model.DisplayID{
+		{},
+	}
+
+	var displayID uint32 = 1
 	//nolint:lll
 	issues := []*model.Issue{
-		{Model: model.Model{ID: uuid.MustParse("018c7765-ffd5-724f-aa7f-227175f54d3f")}, Address: "小森野1-1-1", Name: "久留米太郎", DisplayID: "0001", Status: "survey", Note: "テストデータ", LoanEntries: loanEntries[0:2]},
+		{Model: model.Model{ID: uuid.MustParse("018c7765-ffd5-724f-aa7f-227175f54d3f")}, Address: "小森野1-1-1", Name: "久留米太郎", DisplayID: model.DisplayID{ID: &displayID}, Status: "survey", Note: "テストデータ", LoanEntries: loanEntries[0:2]},
 		// {Model: model.Model{ID: uuid.MustParse("018cfd89-67cd-77f2-955e-da5439bb8d7e")}, Address: "小森野1-1-2", Name: "久留米次郎", DisplayID: "0002", Status: "start", Note: "テストデータ", IsConfirmed: true, LoanEntries: loanEntries[2:]},
 	}
 
@@ -85,6 +94,10 @@ func Seed(db *gorm.DB) {
 	}
 
 	if err := db.Create(&loanEntries).Error; err != nil {
+		slog.Warn("%+v", err)
+	}
+
+	if err := db.Create(&displayIDs).Error; err != nil {
 		slog.Warn("%+v", err)
 	}
 

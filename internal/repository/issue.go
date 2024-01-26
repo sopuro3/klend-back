@@ -4,6 +4,7 @@ package repository
 import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/sopuro3/klend-back/internal/model"
 )
@@ -27,7 +28,7 @@ func NewIssueRepository(db *gorm.DB) IssueRepository {
 func (ir *issueRepository) Find(id uuid.UUID) (*model.Issue, error) {
 	issue := model.Issue{Model: model.Model{ID: id}}
 
-	if err := ir.db.First(&issue).Error; err != nil {
+	if err := ir.db.Preload(clause.Associations).First(&issue).Error; err != nil {
 		return nil, err
 	}
 
@@ -39,7 +40,7 @@ func (ir *issueRepository) Find(id uuid.UUID) (*model.Issue, error) {
 func (ir *issueRepository) FindAll() ([]*model.Issue, error) {
 	var issues []*model.Issue
 
-	result := ir.db.Find(&issues)
+	result := ir.db.Preload(clause.Associations).Find(&issues)
 	if result.Error != nil {
 		return issues, result.Error
 	}
@@ -56,7 +57,7 @@ func (ir *issueRepository) Create(issue *model.Issue) error {
 }
 
 func (ir *issueRepository) Update(issue *model.Issue) error {
-	if err := ir.db.Save(issue).Error; err != nil {
+	if err := ir.db.Updates(issue).Error; err != nil {
 		return err
 	}
 

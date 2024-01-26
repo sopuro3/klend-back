@@ -15,9 +15,9 @@ type LoanEntryRepository interface {
 	FindByIssueID(issueID uuid.UUID) ([]*model.LoanEntry, error)
 	FindByEquipmentID(equipmentID uuid.UUID) ([]*model.LoanEntry, error)
 	FindAll() ([]*model.LoanEntry, error)
-	Create(equipment *model.LoanEntry) error
-	Update(equipment *model.LoanEntry) error
-	Delete(equipment *model.LoanEntry) error
+	Create(loanEntry []*model.LoanEntry) error
+	Update(loanEntry *model.LoanEntry) error
+	Delete(loanEntry *model.LoanEntry) error
 }
 
 type loanEntryRepository struct {
@@ -47,7 +47,7 @@ func (lr *loanEntryRepository) Find(id uuid.UUID) (*model.LoanEntry, error) {
 func (lr *loanEntryRepository) FindByIssueID(issueID uuid.UUID) ([]*model.LoanEntry, error) {
 	var loanEntries []*model.LoanEntry
 
-	if err := lr.db.Where(&model.LoanEntry{IssueID: issueID}).Take(&loanEntries).Error; err != nil {
+	if err := lr.db.Where(&model.LoanEntry{IssueID: issueID}).Find(&loanEntries).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
@@ -61,7 +61,7 @@ func (lr *loanEntryRepository) FindByIssueID(issueID uuid.UUID) ([]*model.LoanEn
 func (lr *loanEntryRepository) FindByEquipmentID(equipmentID uuid.UUID) ([]*model.LoanEntry, error) {
 	var loanEntries []*model.LoanEntry
 
-	if err := lr.db.Where(&model.LoanEntry{EquipmentID: equipmentID}).Take(&loanEntries).Error; err != nil {
+	if err := lr.db.Where(&model.LoanEntry{EquipmentID: equipmentID}).Find(&loanEntries).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
@@ -87,7 +87,7 @@ func (lr *loanEntryRepository) FindAll() ([]*model.LoanEntry, error) {
 	return loanEntrys, nil
 }
 
-func (lr *loanEntryRepository) Create(loanEntry *model.LoanEntry) error {
+func (lr *loanEntryRepository) Create(loanEntry []*model.LoanEntry) error {
 	if err := lr.db.Create(loanEntry).Error; err != nil {
 		return err
 	}
