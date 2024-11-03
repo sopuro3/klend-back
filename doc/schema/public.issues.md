@@ -2,18 +2,20 @@
 
 ## Description
 
+column comment required.
+
 ## Columns
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
 | id | text |  | false | [public.loan_entries](public.loan_entries.md) |  |  |
-| updated_at | timestamp with time zone |  | true |  |  |  |
-| deleted_at | timestamp with time zone |  | true |  |  |  |
-| address | text |  | false |  |  |  |
-| name | text |  | false |  |  |  |
-| display_id | character(4) |  | true |  |  |  |
-| status | text |  | false |  |  |  |
-| note | text |  | false |  |  |  |
+| updated_at | timestamp with time zone |  | true |  |  | column comment required. |
+| deleted_at | timestamp with time zone |  | true |  |  | column comment required. |
+| address | text |  | false |  |  | column comment required. |
+| name | text |  | false |  |  | column comment required. |
+| display_id | character(4) |  | true |  |  | column comment required. |
+| status | text |  | false |  |  | column comment required. |
+| note | text |  | false |  |  | column comment required. |
 
 ## Constraints
 

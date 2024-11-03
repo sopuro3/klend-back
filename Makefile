@@ -30,5 +30,8 @@ run:
 	go run ./klend.go --local
 
 db-doc-gen:
-        docker run --rm -v $PWD:/work --net=klend-back_default -w /work ghcr.io/k1low/tbls doc "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable"
+	docker run  --net=klend-back_default -v $PWD:/work -w /work ghcr.io/k1low/tbls doc  "postgres://postgres:postgres@db:5432/klend?sslmode=disable" --rm-dist 
+#	echo "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable"
+#	docker run --rm --net=klend-back_default -v $PWD:/work -w /work ghcr.io/k1low/tbls doc "postgres://postgres:postgres@db:5432/klend?sslmode=disable"
+#	docker run --rm --net=klend-back_default -v $PWD:/work -w /work ghcr.io/k1low/tbls doc "postgres://postgres:postgres@db:5432/klend?sslmode=disable"
 .PHONY: ci test coverage up up-front psql down clean sand up-sand up-sand-front down-sand run db-doc-gen

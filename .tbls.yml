@@ -1,0 +1,98 @@
+name: "klend"
+desc: klend-backend's database
+dsn: postgres://postgres:postgres@db:5432/klend?sslmode=disable
+docPath: doc/schema
+format: 
+er:
+  format: svg
+  distance: 1
+lint:
+  requireTableComment:
+    enabled: false
+    allOrNothing: false
+    exclude: []
+  requireColumnComment:
+    enabled: true
+    allOrNothing: false
+    exclude:
+    - id
+    - created
+    - updated
+    excludeTables: []
+  requireIndexComment:
+    enabled: false
+    allOrNothing: false
+    exclude: []
+    excludeTables: []
+  requireConstraintComment:
+    enabled: false
+    allOrNothing: false
+    exclude: []
+    excludeTables: []
+  requireTriggerComment:
+    enabled: false
+    allOrNothing: false
+    exclude: []
+    excludeTables: []
+  requireTableLabels:
+    enabled: false
+    allOrNothing: false
+    exclude: []
+  unrelatedTable:
+    enabled: false
+    allOrNothing: false
+    exclude: []
+  columnCount:
+    enabled: true
+    max: 10
+    exclude: []
+  requireColumns:
+    enabled: false
+    columns: []
+  duplicateRelations:
+    enabled: false
+  requireForeignKeyIndex:
+    enabled: false
+    exclude: []
+  labelStyleBigQuery:
+    enabled: false
+    exclude: []
+  requireViewpoints:
+    enabled: false
+    exclude: []
+comments:
+- table: public.users
+  tableComment: ユーザーテーブル
+  columnComments:
+    deleted_at: 削除日時
+    email: メールアドレス
+    external_user_id: ユーザーID
+    hashed_password: argon2でハッシュ化されたpassword
+    updated_at: 更新日時
+    user_name: ユーザー名 256文字以内
+- table: public.issues
+  tableComment: column comment required.
+  columnComments:
+    address: column comment required.
+    deleted_at: column comment required.
+    display_id: column comment required.
+    name: column comment required.
+    note: column comment required.
+    status: column comment required.
+    updated_at: column comment required.
+- table: public.equipment
+  tableComment: column comment required.
+  columnComments:
+    deleted_at: column comment required.
+    max_quantity: column comment required.
+    name: column comment required.
+    note: column comment required.
+    updated_at: column comment required.
+- table: public.loan_entries
+  tableComment: column comment required.
+  columnComments:
+    deleted_at: column comment required.
+    equipment_id: column comment required.
+    issue_id: column comment required.
+    quantity: column comment required.
+    updated_at: column comment required.

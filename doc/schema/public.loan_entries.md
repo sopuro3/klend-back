@@ -2,16 +2,18 @@
 
 ## Description
 
+column comment required.
+
 ## Columns
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
 | id | text |  | false |  |  |  |
-| updated_at | timestamp with time zone |  | true |  |  |  |
-| deleted_at | timestamp with time zone |  | true |  |  |  |
-| equipment_id | text |  | false |  | [public.equipment](public.equipment.md) |  |
-| quantity | integer |  | false |  |  |  |
-| issue_id | text |  | false |  | [public.issues](public.issues.md) |  |
+| updated_at | timestamp with time zone |  | true |  |  | column comment required. |
+| deleted_at | timestamp with time zone |  | true |  |  | column comment required. |
+| equipment_id | text |  | false |  | [public.equipment](public.equipment.md) | column comment required. |
+| quantity | integer |  | false |  |  | column comment required. |
+| issue_id | text |  | false |  | [public.issues](public.issues.md) | column comment required. |
 
 ## Constraints
 
