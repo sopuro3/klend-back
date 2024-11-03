@@ -6,26 +6,26 @@ column comment required.
 
 ## Columns
 
-| Name | Type | Default | Nullable | Children | Parents | Comment |
-| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | text |  | false | [public.loan_entries](public.loan_entries.md) |  |  |
-| updated_at | timestamp with time zone |  | true |  |  | column comment required. |
-| deleted_at | timestamp with time zone |  | true |  |  | column comment required. |
-| name | text |  | false |  |  | column comment required. |
-| max_quantity | integer |  | false |  |  | column comment required. |
-| note | text |  | false |  |  | column comment required. |
+| Name         | Type                     | Default | Nullable | Children                                      | Comment                  |
+| ------------ | ------------------------ | ------- | -------- | --------------------------------------------- | ------------------------ |
+| id           | text                     |         | false    | [public.loan_entries](public.loan_entries.md) |                          |
+| updated_at   | timestamp with time zone |         | true     |                                               | column comment required. |
+| deleted_at   | timestamp with time zone |         | true     |                                               | column comment required. |
+| name         | text                     |         | false    |                                               | column comment required. |
+| max_quantity | integer                  |         | false    |                                               | column comment required. |
+| note         | text                     |         | false    |                                               | column comment required. |
 
 ## Constraints
 
-| Name | Type | Definition |
-| ---- | ---- | ---------- |
+| Name           | Type        | Definition       |
+| -------------- | ----------- | ---------------- |
 | equipment_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 
 ## Indexes
 
-| Name | Definition |
-| ---- | ---------- |
-| equipment_pkey | CREATE UNIQUE INDEX equipment_pkey ON public.equipment USING btree (id) |
+| Name                     | Definition                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| equipment_pkey           | CREATE UNIQUE INDEX equipment_pkey ON public.equipment USING btree (id)            |
 | idx_equipment_deleted_at | CREATE INDEX idx_equipment_deleted_at ON public.equipment USING btree (deleted_at) |
 
 ## Relations

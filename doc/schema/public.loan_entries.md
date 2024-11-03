@@ -6,28 +6,28 @@ column comment required.
 
 ## Columns
 
-| Name | Type | Default | Nullable | Children | Parents | Comment |
-| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | text |  | false |  |  |  |
-| updated_at | timestamp with time zone |  | true |  |  | column comment required. |
-| deleted_at | timestamp with time zone |  | true |  |  | column comment required. |
-| equipment_id | text |  | false |  | [public.equipment](public.equipment.md) | column comment required. |
-| quantity | integer |  | false |  |  | column comment required. |
-| issue_id | text |  | false |  | [public.issues](public.issues.md) | column comment required. |
+| Name         | Type                     | Default | Nullable | Parents                                 | Comment                  |
+| ------------ | ------------------------ | ------- | -------- | --------------------------------------- | ------------------------ |
+| id           | text                     |         | false    |                                         |                          |
+| updated_at   | timestamp with time zone |         | true     |                                         | column comment required. |
+| deleted_at   | timestamp with time zone |         | true     |                                         | column comment required. |
+| equipment_id | text                     |         | false    | [public.equipment](public.equipment.md) | column comment required. |
+| quantity     | integer                  |         | false    |                                         | column comment required. |
+| issue_id     | text                     |         | false    | [public.issues](public.issues.md)       | column comment required. |
 
 ## Constraints
 
-| Name | Type | Definition |
-| ---- | ---- | ---------- |
-| fk_issues_loan_entries | FOREIGN KEY | FOREIGN KEY (issue_id) REFERENCES issues(id) |
+| Name                      | Type        | Definition                                          |
+| ------------------------- | ----------- | --------------------------------------------------- |
+| fk_issues_loan_entries    | FOREIGN KEY | FOREIGN KEY (issue_id) REFERENCES issues(id)        |
 | fk_loan_entries_equipment | FOREIGN KEY | FOREIGN KEY (equipment_id) REFERENCES equipment(id) |
-| loan_entries_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+| loan_entries_pkey         | PRIMARY KEY | PRIMARY KEY (id)                                    |
 
 ## Indexes
 
-| Name | Definition |
-| ---- | ---------- |
-| loan_entries_pkey | CREATE UNIQUE INDEX loan_entries_pkey ON public.loan_entries USING btree (id) |
+| Name                        | Definition                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| loan_entries_pkey           | CREATE UNIQUE INDEX loan_entries_pkey ON public.loan_entries USING btree (id)            |
 | idx_loan_entries_deleted_at | CREATE INDEX idx_loan_entries_deleted_at ON public.loan_entries USING btree (deleted_at) |
 
 ## Relations
